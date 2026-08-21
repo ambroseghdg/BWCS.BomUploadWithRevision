@@ -1,0 +1,918 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (TempData["BOMUploadSuccessMsg"] != null && TempData["BOMUploadSuccessMsg"].ToString().Trim().Length > 7)
+{
+    string strFullSuccMsg = TempData["BOMUploadSuccessMsg"].ToString();
+    string strMsgToUser = TempData["BOMUploadUserMsg"].ToString();     
+    <script type="text/javascript">
+        window.onload = function () { alert("@strFullSuccMsg"); };
+
+        var userNoteMessage = '@strMsgToUser';  //bring it to client side and use further 
+        
+        @*function NotInUseSetUserMessageNotification() {
+            try {
+
+                var lblUserMsg = document.getElementById("lblNoDataMessage");
+                if ("@strMsgToUser".length > 0 && lblUserMsg) {
+                    lblUserMsg.textContent = "@strMsgToUser";
+                    // alert("@strMsgToUser");
+                }
+                else {
+                    lblUserMsg.textContent = "";
+                }
+            } catch (error) {
+                console.error('FYI.Error setting lblNoDataMsg text:', error);
+            }
+            return true;
+        }*@
+
+    </script>
+}
+<meta http-equiv="refresh" content="1200">
+<h2 style="color:#337ab7;font-family:Arial;font-size:large">
+    <a href="https://pkgsazu-app02.bwcinc.org/nic/#/" target="_blank">
+        <input style="float:right" type="button" id="btnCreateNewItem" class="btnCurrent" value="New Item Creation Tool" />
+    </a>
+    <input style="float:right" type="submit" id="btnGetBOMFromMapics" onclick="GetBOMComponents();" class="btnInter" value="Get BOM from XA" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    @* REMOVED <input style="float:right" type="button" id="btnCheckItemExists" onclick="CheckItemExists();" class="btnLast" value="Is this in XA?"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*@
+</h2>
+
+<style type="text/css">
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .btnCurrent {
+        background-color: darkgray;
+        height: 32px;
+        border: none;
+        color: darkblue;
+        text-decoration: none;
+        margin-right: 5px;
+        border: 1px solid #045C97;
+        border-radius: 5px;
+        padding: 2px 4px 4px 4px;
+        display: inline-block;
+        color: Black;
+        text-align: center;
+    }
+
+        .btnCurrent:hover {
+            border: 1px solid #045C97;
+            background-color: #045C97;
+            text-decoration: underline;
+            color: white;
+            text-align: center;
+        }
+
+    .btnLast {
+        background-color: #adf0cf;
+        height: 32px;
+        border: none;
+        cursor: pointer;
+        margin-right: 5px;
+        text-decoration: none;
+        border: 1px solid #045C97;
+        border-radius: 5px;
+        padding: 2px 4px 4px 4px;
+        display: inline-block;
+        color: Black;
+        text-align: center;
+    }
+
+        .btnLast:hover {
+            border: 1px solid #059C41;
+            background-color: #059C41;
+            text-decoration: underline;
+            color: white;
+            text-align: center;
+        }
+
+    .btnInter {
+        background-color: lightpink;
+        height: 32px;
+        border: none;
+        cursor: pointer;
+        margin-right: 5px;
+        text-decoration: none;
+        border: 1px solid #045C97;
+        border-radius: 5px;
+        padding: 2px 4px 4px 4px;
+        display: inline-block;
+        color: Black;
+        text-align: center;
+    }
+
+        .btnInter:hover {
+            border: 1px solid #059C41;
+            background-color: #059C41;
+            text-decoration: underline;
+            color: white;
+            text-align: center;
+        }
+
+
+    .ui-jqgrid .ui-jqgrid-labels th.ui-th-column {
+        height: 60px;
+        font-weight: bold;
+    }
+
+    .jqgrid-header {
+        background: #FF9C00 url(~/Scripts/JQGrid/Redmond/Images/ui-icons_7891AF_256x240.png) repeat-x scroll 50% 50%;
+        border: 1px solid #4297D7;
+        color: #FF0000;
+        font-weight: bold;
+    }
+
+    .ui-jqdialog {
+        display: none;
+        float: left;
+        font-size: 13px;
+        height: 100px;
+        left: 35% !important;
+        overflow: hidden;
+        position: absolute;
+        top: 20% !important;
+        z-index: 200;
+    }
+</style>
+
+<div style="height:100%;width:100%">
+    <div style="margin-left:500px">
+        <label id="lblenvironment" for="ddlEnv" style="color:gray;font-family:Calibri;font-size:14px;">Environment  </label>
+        <select style="color:#337ab7;font-family:Calibri;font-size:14px;height:25px;width:165px;border-radius:5px;margin-left:78px" id="ddlEnv" name="ddlEnv">
+        </select>
+    </div>
+    <br />
+    <div style="margin-left:500px;" id="divItemNumber">
+        <label id="lblItemNumber" for="txtItemNumber" style="color:gray;font-family:Calibri;font-size:14px;">Item Number  </label>
+        <input type="text" name="txtItemNumber" id="txtItemNumber" onfocus="this.select();" onmouseup="return false;" maxlength="15" style="color: #337ab7; font-family: Calibri; font-size: 14px;margin-left:75px; width:16%" />
+    </div>
+    <br />
+    <div style="margin-left:500px;" id="divDescription">
+        <label id="lblDescription" style="color:gray;font-family:Calibri;font-size:14px;">Description  </label>
+        <label id="lblDescriptionValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:90px"></label>
+    </div>
+    <br />
+    <div style="margin-left:500px;" id="divDrawingNumber">
+        <label id="lblDrawingNumber" style="color:gray;font-family:Calibri;font-size:14px;">Drawing Number  </label>
+        <label id="lblDrawingNumberValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:58px"></label>
+    </div>
+    <br />
+</div>
+<div style="height:100%;width:100%;margin-left:5px;">
+    <p><label id="lblNoDataMessage" name="nodata" style="color: #FF4500; font-family: Calibri; font-weight: 400; "></label></p>
+</div>
+    <div style="height:100%;width:100%">
+        <div style="width:99%">
+            <div id="BOMUploadMaster" class="Grid">
+                <table id="BOMUploadGrid" class="GridTable"></table>
+                <div id="BOMUploadPager" class="GridFooter"></div>
+            </div>
+        </div>
+    </div>
+    <label id="lblNote" style="color: #00A3E0; font-family: Calibri; font-weight:400; ">Note: Add a new BOM, and changes will be pushed to XA if the user presses Enter.</label>
+    <br />
+    <br />
+
+    @section scripts {
+        <script type="text/javascript">
+
+        var $jQ = jQuery.noConflict();
+        const currentUrl = new URL(window.location.href);
+        const params = currentUrl.searchParams;
+
+        var qstrItmEnv = params.get('Env');
+        var qstrItmNum = params.get('ParentItem');
+        var LatestParentItemRevision;
+        var strFinalParentItemRevision;
+        // Parent Item Number must be in UPPERCASE - case sensitive when validating XA BOM and data.
+        qstrItmNum = qstrItmNum ? qstrItmNum.toUpperCase() : "";
+
+        var fromQueryString = 'N';
+        $jQ("#lblNote").hide();
+
+        // Currently used environments in the app are pulled from SQL master table.
+        // Any addition to new environment will reflect in the dropdownlist automatically.
+
+        function SETDropDownByText(ddlselector, text) {
+            $jQ(ddlselector + " option").filter(function () {
+                return $jQ(this).text() === text;
+            }).prop("selected", true);
+        }
+
+        // helper: read cookie by name
+        // if browser has document.cookie = "EnvironmentCookie=Environment=FF-BWIS; EnvironmentCookiePDM=EnvironmentPDM=QA-ENV";
+        // call GetEnvCookieText("EnvironmentPDM"); TO return QA-ENV
+
+        function GetEnvCookieText(nameKey) {
+            var bomuploadcookies = document.cookie.split(";"); // split all cookies
+            // alert('Index - doc. cookie: ' + document.cookie);
+            for (var i = 0; i < bomuploadcookies.length; i++) {
+                var eachcookie = bomuploadcookies[i].trim();
+                if (eachcookie.indexOf(nameKey + "=") === 0) {
+                    var rawCookie = eachcookie.substring(nameKey.length + 1);
+                    // rawCookie = "EnvironmentPDM=FF-BWIS"
+
+                    var idx = rawCookie.indexOf("=");
+                    if (idx !== -1) {
+                        return rawCookie.substring(idx + 1); // "FF-BWIS"
+                    }
+                    return rawCookie;
+                }
+            }
+            return null;
+        }
+
+        /*
+            |setCookie Usage:
+
+            var cookieName = "EnvironmentCookie";
+            var cookieValue = "Environment=" + encodeURIComponent(selectedEnv);
+            setCookie(cookieName, cookieValue, 60);
+        */
+
+        function setEnvCookie(cookieName, cookieValue, days) {
+            var expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + days);
+            // alert('Index - setEnvCookie BEFORE document.cookie: ' + document.cookie);
+            var cookieString = cookieName + "=" + cookieValue
+                + "; expires=" + expirationDate.toUTCString()
+                + "; path=/";
+                // var cookieString = cookieName + "=" + cookieValue + "; expires=" + expirationDate.toUTCString() + "; path=/";
+            document.cookie = cookieString;
+            // alert('Index - setEnvCookie after: ' + document.cookie);
+        }
+
+        $jQ(document).ready(function () {
+            // fromQueryString = N will pull default environment from cookie.
+            fromQueryString = 'N';
+            // Parent Item Number must be in UPPERCASE - case sensitive when validating XA BOM and data.
+            $jQ("#txtItemNumber").on("input", function () {
+                this.value = this.value.toUpperCase();
+                // alert(document.getElementById('txtItemNumber').value);
+            });
+
+            $jQ("#txtItemNumber").on("keypress", function (e) {
+                if (e.which === 13) {
+                    e.preventDefault(); GetBOMComponents();
+
+                }
+            });
+
+            $jQ.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAllEnvironments", "BOMUpload")",
+                dataType: "json",   // it is important for Ajax call
+                data: { fromQueryString: fromQueryString },
+                success: function (data) {
+                    var s;
+                    var sdata = data.sort();
+                    //var sdata = data.EnvironmentList.sort((a, b) => a.EnvironmentId.localeCompare(b.EnvironmentId));
+
+                    for (var i = 0; i < sdata.length; i++) {
+                        s += '<option value="' + sdata[i].EnvironmentCode + '">' + sdata[i].EnvironmentId + '</option>';
+                    }
+                    $jQ("#ddlEnv").html(s);
+
+                    var cookieENV = GetEnvCookieText('EnvironmentCookie');
+                    if (cookieENV)
+                        SETDropDownByText("#ddlEnv", cookieENV);
+                    else
+                        SETDropDownByText("#ddlEnv", "FF-17");
+
+                    // //alert('Index cookie|document.ready|GetAllEnvironments: document.cookie: ' + document.cookie + '\n\r' + $jQ("#ddlEnv option:selected").text());
+
+                    if (qstrItmEnv != null)
+                    {
+                        //document.getElementById('ddlEnv').text = qstrItmEnv;
+                        SETDropDownByText("#ddlEnv", qstrItmEnv);
+                        document.getElementById('ddlEnv').disabled = true;
+                        document.getElementById('txtItemNumber').disabled = true;
+                        $jQ("#btnCheckItemExists").hide();
+                        $jQ("#btnGetBOMFromMapics").hide();
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    // alert("Error loading document.ready.GetAllEnvironments:", error)
+                    // console.error("Error loading environments:", error);
+                }
+            });
+
+
+            }); // document ready call END.
+
+        $jQ("body").on("change", "#ddlEnv",
+            function () {
+                    var selectedEnv = jQuery('#ddlEnv :selected').text();
+
+                    // Set the cookie name and value
+                    var cookieName = "EnvironmentCookie";
+                    var cookieValue = "Environment=" + encodeURIComponent(selectedEnv);
+
+                    setEnvCookie(cookieName, cookieValue, 60);
+            });
+
+        if (qstrItmNum != null && qstrItmEnv != null) {
+
+            // // Set the cookie name and value NOT REQUIRED HERE 2025/SEP/22
+            // // var cookieName = "EnvironmentCookie";
+            // // var cookieValue = "Environment=" + encodeURIComponent(qstrItmEnv);
+
+            // // setEnvCookie(cookieName, cookieValue, 60);
+
+            getBOMsUsingQueryString();
+
+        }
+
+        // Assign values to itemnumber and environment from View UI.
+        var itemNumber = document.getElementById('txtItemNumber').value;
+        var environment = jQuery('#ddlEnv :selected').text();    //val();
+
+        // List BOM using Query string parameters
+        function getBOMsUsingQueryString() {
+            if (qstrItmNum != null) {
+                jQuery('#txtItemNumber').val(qstrItmNum);
+                // alert('Index Item: ' + qstrItmNum);
+            }
+
+            if (qstrItmEnv != null) {
+                if (qstrItmEnv      != environment) {
+                    environment = qstrItmEnv;
+                }
+            }
+
+            document.getElementById('btnGetBOMFromMapics').click();
+        }
+
+        function validateUserSequence(value, column) {
+
+            if (value !== undefined) {
+                var grid = $jQ("#BOMUploadGrid");
+
+                // Get current row Id
+                var selRowId = grid.jqGrid('getGridParam', 'selrow');
+                var rowKey = jQuery("#BOMUploadGrid").jqGrid('getGridParam', 'selrow');
+                var rowObject = jQuery('#BOMUploadGrid').getRowData(rowKey);
+
+                var compItem = rowObject.ComponentItemNumber; // Gets the value from the selected row on grid.
+
+                value = value.toString().padStart(4, '0');
+                var varcomponentInGrid, varuserSequenceInGrid, i;
+
+                //Get Index of selected Row
+                var gridSelRowIndex = grid.jqGrid('getInd', selRowId);
+
+                // Loop through the grid data to see for any duplicate record.
+                // If component item and user sequence are repeated, alert user to fix it before proceeding to next step.
+                var gridrows = jQuery("#BOMUploadGrid").getDataIDs();
+
+                for (i = 0; i < gridrows.length; i++) {    // count
+                    varcomponentInGrid = $jQ("#BOMUploadGrid").getCell(gridrows[i], "ComponentItemNumber");
+                    varuserSequenceInGrid = $jQ("#BOMUploadGrid").getCell(gridrows[i], "UserSequence");
+
+                    /* alert(gridSelRowIndex + ' == ' + (i + 1));    */
+                    // Skip current editing row
+                    // if ((i + 1) == gridSelRowIndex) continue;
+
+                    if (varcomponentInGrid !== undefined && varuserSequenceInGrid !== undefined) {
+                        if (value.toLowerCase() === varuserSequenceInGrid.toLowerCase() && compItem.toLowerCase() === varcomponentInGrid.toLowerCase() && gridSelRowIndex != (i + 1)) {
+                            // alert('gridSelRowIndex: ' + gridSelRowIndex + '  i + 1: ' + (i + 1) + ' | ' + value.toLowerCase() + ' === ' + varuserSequenceInGrid.toLowerCase() + ' | ' + compItem.toLowerCase() + ' === ' + varcomponentInGrid.toLowerCase());
+                            return [false, " *** The combination of User Sequence and Component Item already exist. Please select a different combination to proceed. ***"];
+                        }
+                    }
+                }
+            }
+            return [true, ""];
+        }
+
+        // Child component is mandatory field while creating a new component to the BOM.
+        // Also the same component item with same balloon cannot be repeated within the same BOM.
+        function validateComponentItem(value, column) {
+            if (value !== undefined) {
+                if (value.trim() === '') {
+                    return [false, "Child Component Item: Field is required"];
+                }
+                else {
+                    var grid = $jQ("#BOMUploadGrid");
+
+                    // Get current row Id
+                    var selRowId = grid.jqGrid('getGridParam', 'selrow');
+                    var userSeqId = "#" + selRowId + "_UserSequence";
+                    var userSeq = document.querySelector(userSeqId).value;  // Gets the value from the selected row on grid.
+                    userSeq = userSeq.toString().padStart(4, '0')
+
+                    // If component item and user sequence are repeated, alert user to fix it before proceeding to next step.
+                    var gridrows = jQuery("#BOMUploadGrid").getDataIDs();
+
+                    var componentInGrid, userSequenceInGrid, i;
+
+                    //Get Index of selected Row
+                    var gridselrowIndex = grid.jqGrid('getInd', selRowId);
+
+                    // Loop through the grid data to see for any duplicate record.
+                    // If component item and user sequence are repeated, alert user to fix it before proceeding to next step.
+                    for (i = 0; i < gridrows.length; i++) {
+                        ////componentInGrid = listOfComponents[i];
+                        ////userSequenceInGrid = listOfUserSequence[i];
+                         componentInGrid = $jQ("#BOMUploadGrid").getCell(gridrows[i], "ComponentItemNumber");
+                         userSequenceInGrid = $jQ("#BOMUploadGrid").getCell(gridrows[i], "UserSequence");
+
+                        if (componentInGrid !== undefined && userSequenceInGrid !== undefined && gridselrowIndex != (i + 1)) {
+                            if (value.toLowerCase() === componentInGrid.toLowerCase() && userSeq.toLowerCase() === userSequenceInGrid.toLowerCase()) {
+                                return [false, "The combination of User Sequence and Component Item already exist. Please select a different combination to proceed !"];
+                            }
+                        }
+                    }
+
+                }
+            }
+            return [true, ""];
+        }
+
+        // Check whether Item exists in XA or Not. If does not exist, alert user, no record.
+        function CheckItemExists() {
+            $jQ.blockUI({
+                message: '<img src="../Images/PageLoader.gif" />',
+                css: {
+                    border: 'none',
+                    backgroundColor: 'none',
+                    opacity: .7
+                }
+            });
+            var ValidateResult = true;
+            var itemNum = jQuery("#txtItemNumber").val()
+            if (itemNum == "") {
+                alert("Please Enter Item Number to proceed!");
+                ValidateResult = false;
+                $jQ.unblockUI();
+            }
+
+            if (ValidateResult == true) {
+                // // // jQuery('#BOMUploadGrid').jqGrid('clearGridData'); it not required and performed while reloadgrid data.
+                var itemNumber = document.getElementById('txtItemNumber').value;
+                var environment = jQuery('#ddlEnv :selected').text();
+                var site = jQuery('#ddlEnv :selected').val();
+
+                if (qstrItmEnv != null) {
+                    if (qstrItmEnv != environment) {
+                        environment = qstrItmEnv;
+                    }
+                }
+
+                strFinalParentItemRevision = "GetLatestRevision";
+
+                jQuery.ajax({
+                    url: "/BOMUpload/CheckItemExistence",
+                    type: 'POST',
+                    data: JSON.stringify({ itemNumber: itemNumber, environment: environment, site: site, qsStrParentItemRevision: strFinalParentItemRevision}),
+                    datatype: "json",
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $jQ.unblockUI();
+                        var itemNumber1 = response[0].ItemNumber;
+                        var description = response[0].ItemDescription;
+                        var completeDescription = response[0].CompleteDescription;
+                        var drawingNumber = response[0].DrawingNumber;
+
+                        if (itemNumber1 == "") {
+                            alert("Item " + itemNumber + " does not exist in environment: " + environment);
+                            $jQ('#txtItemNumber').html("");
+                            $jQ('#lblDescriptionValue').html("");
+                            $jQ('#lblDrawingNumberValue').html("");
+                            $jQ('#lblDescriptionValue').hide();
+                            $jQ('#lblDrawingNumberValue').hide();
+                            $jQ("#BOMUploadGrid").hide();
+                        }
+                        else {
+                            $jQ('#lblDescriptionValue').html(description);
+                            $jQ('#lblDrawingNumberValue').html(drawingNumber);
+                            SETDropDownByText("#ddlEnv", qstrItmEnv);
+                            $jQ('#lblDescriptionValue').show();
+                            $jQ('#lblDrawingNumberValue').show();
+
+                            const $lbl = $jQ('#lblDescriptionValue');
+                            const hasError = $lbl.text().toLowerCase().includes('systemlink service call error');
+
+                            if (hasError) {
+                                $lbl.css('background-color', 'yellow');
+                            } else {
+                                $lbl.css('background-color', '');
+                            }
+
+                            CheckItemHeaderExists();
+                        }
+                    },
+                    error: function (result) {
+                        $jQ.unblockUI();
+                    }
+                });
+            }
+        }
+
+        // Check whether Item HEADER exists in XA or Not. If does not exist, alert user, no record.
+        function CheckItemHeaderExists() {
+            $jQ.blockUI({
+                message: '<img src="../Images/PageLoader.gif" />',
+                css: {
+                    border: 'none',
+                    backgroundColor: 'none',
+                    opacity: .7
+                }
+            });
+            var ValidateResult = true;
+            var itemNum = jQuery("#txtItemNumber").val()
+            if (itemNum == "") {
+                alert("Please Enter Item Number to proceed!");
+                ValidateResult = false;
+                $jQ.unblockUI();
+            }
+
+            if (ValidateResult == true) {
+                // // // jQuery('#BOMUploadGrid').jqGrid('clearGridData'); it not required and performed while reloadgrid data.
+                var itemNumber = document.getElementById('txtItemNumber').value;
+                var environment = jQuery('#ddlEnv :selected').text();
+                var site = jQuery('#ddlEnv :selected').val();
+
+                if (qstrItmEnv != null) {
+                    if (qstrItmEnv != environment) {
+                        environment = qstrItmEnv;
+                    }
+                }
+
+                strFinalParentItemRevision = "GetLatestRevision";
+
+                jQuery.ajax({
+                    url: "/BOMUpload/IsVaildHeaderParentItem",
+                    type: 'POST',
+                    data: JSON.stringify({ itemNumber: itemNumber, environment: environment, site: site, qsStrParentItemRevision: strFinalParentItemRevision }),
+                    datatype: "json",
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $jQ.unblockUI();
+                        var itemNumber1 = response[0].ItemNumber;
+                        var description = response[0].ItemDescription;
+                        var completeDescription = response[0].CompleteDescription;
+                        var drawingNumber = response[0].DrawingNumber;
+                        var ITTYP = response[0].ItemType;
+
+                        if (['0', '1', '2', '9'].indexOf(ITTYP) == -1) {
+                            alert("XA Error: Item " + itemNumber + " ( Item Type " + ITTYP + " ) cannot have a BOM. Only Types 0, 1, 2, and 9 can have BOMs. Please change the item type using the NICe tool.");
+                            $jQ('#lblDescriptionValue').html("");
+                            $jQ('#lblDrawingNumberValue').html("");
+                            $jQ('#lblDescriptionValue').hide();
+                            $jQ('#lblDrawingNumberValue').hide();
+                            $jQ("#BOMUploadGrid").hide();
+                            $jQ('#lblNoDataMessage').html("XA Error: Item " + itemNumber + " ( Item Type " + ITTYP + " ) cannot have a BOM. Only Types 0, 1, 2, and 9 can have BOMs. Please change the item type using the NICe tool.");
+                        }
+                        else {
+                            $jQ('#lblDescriptionValue').html(description);
+                            $jQ('#lblDrawingNumberValue').html(drawingNumber);
+
+                            $jQ('#lblDescriptionValue').show();
+                            $jQ('#lblDrawingNumberValue').show();
+                            $jQ('#lblNoDataMessage').html("");
+
+                            // it will show error notification to User
+                            if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                        }
+                    },
+                    error: function (result) {
+                        $jQ.unblockUI();
+                    }
+                });
+            }
+        }
+
+        // Check GetParentItemRevisionByParentItemSite
+        function GetLatestParentItemRevisionByParentItemSite() {
+            $jQ.blockUI({
+                message: '<img src="../Images/PageLoader.gif" />',
+                css: {
+                    border: 'none',
+                    backgroundColor: 'none',
+                    opacity: .7
+                }
+            });
+
+            var ValidateResult = true;
+            var itemNum = jQuery("#txtItemNumber").val()
+            if (itemNum == "") {
+                alert("Please Enter Item Number to proceed!");
+                ValidateResult = false;
+                $jQ.unblockUI();
+            }
+
+            if (ValidateResult == true) {
+
+                var itemNumber = document.getElementById('txtItemNumber').value;
+                var environment = jQuery('#ddlEnv :selected').text();
+                var site = jQuery('#ddlEnv :selected').val();
+
+                if (qstrItmEnv != null) {
+                    if (qstrItmEnv != environment) {
+                        environment = qstrItmEnv;
+                    }
+                }
+
+                // Get latest Parent Item Revision using POST Start
+                // url: "/BOMUpload/GetParentItemRevisionByParentItemSite",
+                jQuery.ajax({
+                    url: '@Url.Action("GetParentItemRevisionByParentItemSite", "BOMUpload")',
+                    type: 'POST',
+                    data: JSON.stringify({ itemNumber: itemNumber, environment: environment, site: site }),
+                    datatype: "json",
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $jQ.unblockUI();
+                        var itemNumber1 = response[0].ItemNumber;
+                        var description = response[0].ItemDescription;
+                        var completeDescription = response[0].CompleteDescription;
+                        var drawingNumber = response[0].DrawingNumber;
+                        LatestParentItemRevision = response[0].ParentItemRevision;
+                        // alert("GetLatestParentItemRevisionByParentItemSite:::" + LatestParentItemRevision);
+                        if (itemNumber1 == "") {
+                            alert("GetParentItemRevisionByParentItemSite | Item " + itemNumber + " does not exist in environment: " + environment);
+                            $jQ('#txtItemNumber').html("");
+                            $jQ('#lblDescriptionValue').html("");
+                            $jQ('#lblDrawingNumberValue').html("");
+                            $jQ('#lblDescriptionValue').hide();
+                            $jQ('#lblDrawingNumberValue').hide();
+                            $jQ("#BOMUploadGrid").hide();
+                        }
+                        else {
+                            //$jQ('#lblDescriptionValue').html(description);
+                            //$jQ('#lblDrawingNumberValue').html(drawingNumber);
+                            //SETDropDownByText("#ddlEnv", qstrItmEnv);
+                            //$jQ('#lblDescriptionValue').show();
+                            //$jQ('#lblDrawingNumberValue').show();
+
+                            const $lbl = $jQ('#lblDescriptionValue');
+                            const hasError = $lbl.text().toLowerCase().includes('systemlink service call error');
+
+                            if (hasError) {
+                                $lbl.css('background-color', 'yellow');
+                            } else {
+                                $lbl.css('background-color', '');
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        $jQ.unblockUI();
+                    }
+                });
+
+                // Get latest Parent Item Revision END
+            }
+        }
+
+        // Reload the grid data while EDIT.
+        function reloaddata(rowid, result) {
+            $("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+        }
+
+        // loadonce: true, needs to work SORT, column Text filter
+        // The below method is triggered when GetBOMFromMapics is clicked.
+        // $jQ('#btnGetBOMFromMapics').click(function () {
+        function GetBOMComponents() {
+
+            $jQ("#ddlEnv").val("@ViewBag.SelectedEnv");
+
+            var cookieENV = GetEnvCookieText('EnvironmentCookie')
+            if (cookieENV)
+                SETDropDownByText("#ddlEnv", cookieENV);
+            else
+                SETDropDownByText("#ddlEnv", "ff-17");
+
+            // Check BOM existence and proceed.
+            CheckItemExists();
+
+            // 2026/May/14 - BOM Upload to XA - BOM grid loaded by Latest Parent Item Revision to avoid any issue with multiple revisions.
+            // This will ensure only the latest revision BOM is loaded and updated.
+
+            // // GetLatestParentItemRevisionByParentItemSite(); - no need here, moved to controller logic
+
+            $jQ("#BOMUploadGrid").show();
+
+            // Reload grid data if aleady loaded. //2026/FEB/10 FIX TESTED
+            if ($jQ("#BOMUploadGrid")[0].grid)
+            {
+                $jQ("#BOMUploadGrid").jqGrid('clearGridData');
+
+                $jQ("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json', page: 1 }).trigger('reloadGrid', [{ current: true }]);
+                return;
+            }
+
+            // alert("GetSingleLevelBOMComponentsByParentItemRevision|LatestParentItemRevision: " + LatestParentItemRevision);
+
+            // BOM grid INITIALIZATION done alone (RUNS for ONCE) FIX DEC 2025  GetSingleLevelBOMComponents
+            var lastsel;
+            $jQ.grid = $jQ("#BOMUploadGrid").jqGrid({
+                url: '@Url.Action("GetSingleLevelBOMComponentsByParentItemRevision", "BOMUpload")',
+                mtype: 'GET',
+                datatype: 'json',
+                postData: {
+                    itemNumber: function () {
+                        return jQuery("#txtItemNumber").val()
+                    },
+                    environment: function () {
+                        let env = jQuery('#ddlEnv :selected').text();
+
+                        if (typeof qstrItmEnv !== "undefined" && qstrItmEnv != null) {
+                            if (qstrItmEnv !== env) env = qstrItmEnv;
+                        }
+                        return env;
+                    },
+                    site: function () {
+                        // alert(jQuery('#ddlEnv').val());
+                        return $jQ('#ddlEnv').val();  //jQuery("#ddlEnv").val();
+                    },
+                    parentitemrevision : function () {
+                         return LatestParentItemRevision;   //strFinalParentItemRevision;
+                    }
+                },
+                colNames: ['Token', 'Site', 'PItem', 'PRev', 'AltBOM', 'CItem', 'CRev', 'Env',
+                    'Balloon', 'Child Item Number', 'Qty', 'XA Description', 'Parent Item Revision', 'Revision', 'UoM', 'Item Type', 'Action'],
+                colModel: [
+                    { key: true, name: 'MasterCode', width: 40, index: 'MasterCode', hidden: true },
+                    { name: 'Site', width: 40, index: 'Site', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'ParentItemNumber', width: 40, index: 'ParentItemNumber', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'ParentItemRevision', width: 40, index: 'ParentItemRevision', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'AlternateBOMId', width: 40, index: 'AlternateBOMId', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'ComponentItem', width: 40, index: 'ComponentItem', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'ComponentItemRevision', width: 40, index: 'ComponentItemRevision', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    { name: 'Environment', width: 40, index: 'Environment', hidden: true, editable: true, editoptions: { maxlength: 10, }, editrules: { required: false }, edittype: 'text', classes: "grid-col" },
+                    {
+                        name: 'UserSequence', id: 'UserSequence', index: 'UserSequence', width: 20, editable: true, editoptions: { maxlength: 4, },
+                        editrules: {
+                            required: false,
+                            custom_func: validateUserSequence,
+                            custom: true,
+                        }, edittype: 'text', classes: "grid-col"
+                    },
+                    {
+                        name: 'ComponentItemNumber', id: 'ComponentItemNumber', index: 'w',
+                            align: "center", width: 80, editable: true, editoptions: { maxlength: 15, }, editrules: {
+                            custom_func: validateComponentItem,
+                            custom: true,
+                        }, edittype: 'text', classes: "grid-col"
+                    },
+                    {
+                        name: 'Qty', index: 'Qty', width: 30, align: "center", editable: true, editoptions: { maxlength: 11, }, editrules: { required: true }, edittype: 'text', classes: 'grid-col', sorttype: 'int', formatter: 'integer'
+                    },
+                    {
+                        name: 'CompleteComponentDescription', index: 'CompleteComponentDescription', width: 160, editable: false, classes: "grid-col"
+                    },
+                    {
+                        name: 'ParentItemRevision', index: 'ParentItemRevision', width: 20, align: "center", editable: false, classes: "grid-col"
+                    },
+                    {
+                        name: 'Revision', index: 'Revision', width: 20, align: "center", editable: false, classes: "grid-col"
+                    },
+                    {
+                        name: 'UnitOfMeasure', index: 'UnitOfMeasure', width: 20, align: "center", editable: false, classes: "grid-col"
+                    },
+                    {
+                        name: 'ItemType', index: 'ItemType', width: 20, align: "center", editable: false, classes: "grid-col"
+                    },
+                    {
+                        name: 'actions', index: 'actions', width: 15, index: 'actions', formatter: 'actions', search: false, sortable: false,
+                        formatoptions: {
+                            keys: true,
+                            editbutton: false,
+                            delOptions: {
+                                url: '/BOMUpload/DeleteBOMComponent',
+                                contentType: 'application/json; charset=utf-8',
+                                mtype: "POST",
+                                dataType: 'json',
+                                keys: true,
+                                extraparam: {},
+                                afterComplete: function (response) {
+                                    if (response != undefined) {
+                                        if (response.responseText.search("Error") == 1) {
+                                            jQuery("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+                                            alert('Deletion failed. Please contact administrator.');
+                                        }
+                                    }
+                                },
+                            },
+                        }
+                    },
+                ],
+                pager: jQuery('#BOMUploadPager'),
+                rowNum: 100,
+                sortname: 'UserSequence',
+                gridview: true,
+                sortorder: 'asc',
+                rowList: [25, 50, 75, 100],
+                height: '100%',
+                viewrecords: true,
+                autowidth: true,
+                loadonce: true,
+                loadtext: 'Loading ... Please wait ...',
+                emptyrecords: 'No records found!',
+                loadComplete: function (data) {
+                    // it will show error notification to User
+                    if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                },
+                ondblClickRow: function (MasterCode, iRow, iCol, e) {
+
+                    var colNames = jQuery(this).jqGrid('getGridParam', 'colNames');
+                    var colName = colNames[iCol];
+                    var colVal = jQuery(this).jqGrid('getCell', MasterCode, iCol);
+
+                    if (MasterCode) {
+
+                        jQuery('#BOMUploadGrid').jqGrid('restoreRow', lastsel);
+                        var cm = jQuery('#BOMUploadGrid').jqGrid('getColProp', 'MasterCode');
+                        cm.editable = false;
+                        var rowId = jQuery("#BOMUploadGrid").jqGrid("getGridParam", "selrow");
+                        var rowData = jQuery(this).getRowData(rowId);
+                        componentItem = rowData['MasterCode'];
+                        var compcm = jQuery('#BOMUploadGrid').jqGrid('getColProp', 'ComponentItemNumber');
+                        compcm.editable = false;
+                        compcm.required = false;
+
+                        jQuery('#BOMUploadGrid').jqGrid('editRow', MasterCode, true, '', '', '', '', reloaddata);
+                        compcm.editable = true;
+                        compcm.required = true;
+
+                        lastsel = MasterCode;
+                    }
+                },
+                editurl: '/BOMUpload/UpdateBOMComponent',
+                ajaxRowOptions: {
+                    complete: function (response) {
+                        if (response != undefined) {
+                            if (response.responseText.search("Error") == 1) {
+                                jQuery("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+                                alert(response.responseText);
+                            }
+                            else {
+                                jQuery("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+                            }
+                        }
+                    },
+                }
+            }).jqGrid('navGrid', '#BOMUploadPager', {
+                add: false,
+                edit: false,
+                del: false,
+                search: true,
+                refresh: true,
+                refreshtext: "",
+            })
+                .jqGrid('inlineNav', '#BOMUploadPager', {
+                    edit: false,
+                    add: true,
+                    del: false,
+                    search: true,
+                    refresh: true,
+                    cancel: false,
+                    multipleSearch: true,
+                    multipleGroup: true,
+                    searchText: "search",
+                    deltext: "Delete",
+                    saveicon: false,
+                    addicon: "ui-icon-plus",
+                    refreshtext: "Refresh",
+                    addParams: {
+                        useDefValues: true,
+                        position: "last",
+                        addRowParams: {
+                            url: '/BOMUpload/CreateBOMHeaderBOMComponent',   //CreateBOMComponent
+                            mtype: "POST",
+                            keys: true,
+                            extraparam: {},
+                            successfunc: function (val) {
+                                if (val.responseText != "") {
+                                    $("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+                                }
+                                else {
+                                    $("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
+
+                                }
+                            },
+                            oneditfunc: function (rowid) {
+                                jQuery('#BOMUploadGrid').jqGrid('restoreRow', lastsel);
+                            },
+                        }
+                    }
+                });
+
+            jQuery("#BOMUploadGrid").jqGrid('filterToolbar', { searchOperators: false, stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
+
+            $jQ("#lblNote").show();
+
+            // alert('Get BOM from XA - completed !');
+            // // $jQ("#BOMUploadGrid").jqGrid("setGridParam", { datatype: "json" }).trigger("reloadGrid", [{ current: true }]);
+
+        };
+
+        </script>
+    }

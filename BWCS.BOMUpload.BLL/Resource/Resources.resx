@@ -1,0 +1,504 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CreateBOMComponent" xml:space="preserve">
+    <value>&lt;Create name='createObject_BillofMaterialComponent' domainClass='com.mapics.epdm.BillOfMaterialComponent'&gt;
+       &lt;ApplyTemplate&gt;&lt;![CDATA[(none)]]&gt;&lt;/ApplyTemplate&gt;
+       &lt;DomainEntity&gt;
+&lt;Key&gt;
+&lt;Property path='site'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='parentItem'&gt;  
+&lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='parentItemRevision'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^ ]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='alternateBomId'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^alternateBomId^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='componentItem'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^componentItem^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='componentItemRevision'&gt; &lt;Value&gt;&lt;![CDATA[^^componentItemRevision^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;         
+&lt;/Key&gt;
+&lt;Property path='userSequence1'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^userSequence1^^]]&gt;&lt;/Value&gt;   
+&lt;/Property&gt;
+&lt;Property path='quantityPerUnit'&gt;  
+&lt;Value&gt;&lt;![CDATA[^^quantityPerUnit^^]]&gt;&lt;/Value&gt;  
+&lt;/Property&gt;
+&lt;/DomainEntity&gt;
+&lt;/Create&gt;</value>
+    <comment>Create BOM component in XA</comment>
+  </data>
+  <data name="CreateBOMHeader" xml:space="preserve">
+    <value>&lt;Create name='createObject_BillofMaterial' domainClass='com.mapics.epdm.BillOfMaterial'&gt;
+&lt;ApplyTemplate&gt;&lt;![CDATA[(none)]]&gt;&lt;/ApplyTemplate&gt;
+&lt;DomainEntity&gt;
+&lt;Key&gt;
+         &lt;Property path='site'&gt; 
+         &lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt; 
+         &lt;/Property&gt;
+         &lt;Property path='parentItem'&gt;
+         &lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+         &lt;Property path='parentItemRevision'&gt;
+         &lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+         &lt;Property path='alternateBomId'&gt;
+         &lt;Value&gt;&lt;![CDATA[ ]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+&lt;/Key&gt;
+&lt;Property path='description'&gt;
+&lt;Value&gt;&lt;![CDATA[^^description^^]]&gt;&lt;/Value&gt;
+&lt;/Property&gt;
+&lt;Property path='standardBatchQuantity'&gt;
+&lt;Value&gt;&lt;![CDATA[^^standardBatchQuantity^^]]&gt;&lt;/Value&gt;
+&lt;/Property&gt;
+&lt;/DomainEntity&gt;
+&lt;/Create&gt;</value>
+    <comment>Create BOM Header in XA</comment>
+  </data>
+  <data name="DeleteBOMComponent" xml:space="preserve">
+    <value>&lt;Delete name='deleteObject_BillofMaterialComponent' domainClass='com.mapics.epdm.BillOfMaterialComponent'&gt;
+       &lt;DomainEntity&gt;
+         &lt;Key&gt;
+           &lt;Property path='site'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='alternateBomId'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^alternateBomId^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='token'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^token^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+         &lt;/Key&gt;
+       &lt;/DomainEntity&gt;
+&lt;/Delete&gt;</value>
+    <comment>Delete BOM component</comment>
+  </data>
+  <data name="GetItemDetails" xml:space="preserve">
+    <value>&lt;QueryList name='queryListItemRevision_BOMUPLOADTOOL' domainClass='com.mapics.epdm.ItemRevision' includeMetaData='true' maxReturned='1'&gt;
+&lt;Pql&gt;&lt;![CDATA[SELECT item,
+                  description,
+                  drawingNumber,  
+                   relatedItemRevisionPurchase.extendedDescription1,
+                   relatedItemRevisionPurchase.extendedDescription2,
+                   userFieldText40,
+                    relatedZ1786B280289768220314AAAAAAAAACZ.oepnix, 
+                    revision, stockingUm, itemType,
+                    relatedCurrentPrimaryBillOfMaterial.numberOfComponents 
+                    WHERE (item = '^^item^^' AND site='^^site^^')
+                     ORDER BY item,site,revision]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>Check for existence of item in XA and pull all item related information if item exists.</comment>
+  </data>
+  <data name="GetSingleLevelBOM" xml:space="preserve">
+    <value>&lt;QueryList name='queryListBillofMaterialComponent_BOMUPLOAD01' domainClass='com.mapics.epdm.BillOfMaterialComponent' includeMetaData='true' maxReturned='1000'&gt;
+&lt;Pql&gt;
+&lt;![CDATA[SELECT 
+                      site,
+                       parentItem,
+                       parentItemRevision,
+                       alternateBomId,
+                       componentItem,
+                       componentItemRevision,
+                        token,
+                        userSequence1,
+                        quantityPerUnit,
+                        relatedComponentItemRevision.description,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription1,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription2,
+userFieldCodeA,
+operationWhereFirstUsed,    
+ relatedComponentItemRevision.stockingUm,  
+ relatedComponentItemRevision.currentBasePriceUm,
+ relatedComponentItemRevision.itemType,
+ relatedComponentItemRevision.relatedZ1786B280289768220314AAAAAAAAACZ.oepnix 
+WHERE (parentItem = '^^parentItem^^' AND site= '^^site^^')
+ORDER BY userSequence1,componentItem]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>Bill of Materials - Single Level BOM fetch</comment>
+  </data>
+  <data name="UpdateBOMComponent" xml:space="preserve">
+    <value>&lt;Update name='updateObject_BillofMaterialComponent' domainClass='com.mapics.epdm.BillOfMaterialComponent'&gt;
+       &lt;ApplyTemplate&gt;&lt;![CDATA[(none)]]&gt;&lt;/ApplyTemplate&gt;
+       &lt;DomainEntity&gt;
+         &lt;Key&gt;
+           &lt;Property path='site'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='alternateBomId'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^alternateBomId^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='token'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^token^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+         &lt;/Key&gt;
+         &lt;Property path='userSequence1'&gt;
+           &lt;Value&gt;&lt;![CDATA[^^userSequence1^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+         &lt;Property path='quantityPerUnit'&gt;
+           &lt;Value&gt;&lt;![CDATA[^^quantityPerUnit^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+       &lt;/DomainEntity&gt;
+     &lt;/Update&gt;</value>
+    <comment>Update BOM Component in XA   (User can modify the sequence and quantity alone)</comment>
+  </data>
+  <data name="UUCreateBOMComponent" xml:space="preserve">
+    <value>&lt;Create name='createObject_BillofMaterialComponent' domainClass='com.mapics.epdm.BillOfMaterialComponent'&gt;
+       &lt;ApplyTemplate&gt;&lt;![CDATA[(none)]]&gt;&lt;/ApplyTemplate&gt;
+       &lt;DomainEntity&gt;
+&lt;Key&gt;
+&lt;Property path='site'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='parentItem'&gt;  
+&lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='parentItemRevision'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^ ]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='alternateBomId'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^alternateBomId^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='componentItem'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^componentItem^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;
+&lt;Property path='componentItemRevision'&gt; &lt;Value&gt;&lt;![CDATA[^^componentItemRevision^^]]&gt;&lt;/Value&gt; 
+&lt;/Property&gt;         
+&lt;/Key&gt;
+&lt;Property path='userSequence2'&gt; 
+&lt;Value&gt;&lt;![CDATA[^^userSequence2^^]]&gt;&lt;/Value&gt;   
+&lt;/Property&gt;
+&lt;Property path='quantityPerUnit'&gt;  
+&lt;Value&gt;&lt;![CDATA[^^quantityPerUnit^^]]&gt;&lt;/Value&gt;  
+&lt;/Property&gt;
+&lt;/DomainEntity&gt;
+&lt;/Create&gt;</value>
+    <comment>Create BOM component in XA for UU Env</comment>
+  </data>
+  <data name="UUGetSingleLevelBOM" xml:space="preserve">
+    <value>&lt;QueryList name='queryListBillofMaterialComponent_BOMUPLOAD01' domainClass='com.mapics.epdm.BillOfMaterialComponent' includeMetaData='true' maxReturned='1000'&gt;
+&lt;Pql&gt;
+&lt;![CDATA[SELECT 
+                      site,
+                       parentItem,
+                       parentItemRevision,
+                       alternateBomId,
+                       componentItem,
+                       componentItemRevision,
+                        token,
+                        userSequence2,
+                        quantityPerUnit,
+                        relatedComponentItemRevision.description,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription1,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription2,
+userFieldCodeA,
+operationWhereFirstUsed,
+ relatedComponentItemRevision.currentBasePriceUm, 
+ relatedComponentItemRevision.stockingUm,  
+ relatedComponentItemRevision.itemType, 
+ relatedComponentItemRevision.relatedZ1786B280289768220314AAAAAAAAACZ.oepnix 
+WHERE (parentItem = '^^parentItem^^' AND site= '^^site^^')
+ORDER BY userSequence2, componentItem]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>Bill of Materials - Single Level BOM fetch for UU</comment>
+  </data>
+  <data name="UUUpdateBOMComponent" xml:space="preserve">
+    <value>&lt;Update name='updateObject_BillofMaterialComponent' domainClass='com.mapics.epdm.BillOfMaterialComponent'&gt;
+       &lt;ApplyTemplate&gt;&lt;![CDATA[(none)]]&gt;&lt;/ApplyTemplate&gt;
+       &lt;DomainEntity&gt;
+         &lt;Key&gt;
+           &lt;Property path='site'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^site^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='parentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^parentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='alternateBomId'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^alternateBomId^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItem'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItem^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='componentItemRevision'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^componentItemRevision^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+           &lt;Property path='token'&gt;
+             &lt;Value&gt;&lt;![CDATA[^^token^^]]&gt;&lt;/Value&gt;
+           &lt;/Property&gt;
+         &lt;/Key&gt;
+         &lt;Property path='userSequence2'&gt;
+           &lt;Value&gt;&lt;![CDATA[^^userSequence2^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+         &lt;Property path='quantityPerUnit'&gt;
+           &lt;Value&gt;&lt;![CDATA[^^quantityPerUnit^^]]&gt;&lt;/Value&gt;
+         &lt;/Property&gt;
+       &lt;/DomainEntity&gt;
+     &lt;/Update&gt;</value>
+    <comment>Update BOM Component in XA   (User can modify the sequence and quantity alone)</comment>
+  </data>
+  <data name="XALoginTEST" xml:space="preserve">
+    <value>&lt;Login userId='{0}' password='{1}' maxIdle='0' properties='com.pjx.cas.domain.EnvironmentId={3},com.pjx.cas.domain.SystemName={4},com.pjx.cas.user.LanguageId=en'/&gt;</value>
+    <comment>SystemLink ConnectionString with Login Credentials</comment>
+  </data>
+  <data name="XALogin" xml:space="preserve">
+    <value>&lt;Login userId='{0}' password='{1}' maxIdle='{2}' properties='com.pjx.cas.domain.EnvironmentId={3},com.pjx.cas.domain.SystemName={4},com.pjx.cas.user.LanguageId=en'/&gt;</value>
+    <comment>SystemLink ConnectionString with Login Credentials</comment>
+  </data>
+  <data name="XALogOut" xml:space="preserve">
+    <value>&lt;Logout sessionHandle='{0}'/&gt;</value>
+    <comment>Logout Current XA Session Handle</comment>
+  </data>
+  <data name="XARequestTEST" xml:space="preserve">
+    <value>&lt;Request sessionHandle='{0}' workHandle='*new'
+          broker='EJB' maxIdle='0'&gt;{1} &lt;Logout sessionHandle='{0}'/&gt; &lt;/Request&gt;</value>
+    <comment>SystemLink - Request Node</comment>
+  </data>
+  <data name="XARequest" xml:space="preserve">
+    <value>&lt;Request sessionHandle='{0}' workHandle='*new'
+          broker='EJB' maxIdle='10000'&gt;{1}&lt;/Request&gt;</value>
+    <comment>SystemLink - Request Node</comment>
+  </data>
+  <data name="XASystemLinkRequest" xml:space="preserve">
+    <value>&lt;?xml version='1.0' encoding='ISO-8859-1'?&gt;&lt;!DOCTYPE System-Link SYSTEM "SystemLinkRequest.dtd"&gt;&lt;System-Link&gt;{0}&lt;/System-Link&gt;</value>
+    <comment>SystemLink Request</comment>
+  </data>
+  <data name="GetItemDetailsByRevision" xml:space="preserve">
+    <value>&lt;QueryList name='queryListItemRevision_BOMUPLOADTOOL' domainClass='com.mapics.epdm.ItemRevision' includeMetaData='true' maxReturned='1'&gt;
+&lt;Pql&gt;&lt;![CDATA[SELECT item,
+                  description,
+                  drawingNumber,  
+                   relatedItemRevisionPurchase.extendedDescription1,
+                   relatedItemRevisionPurchase.extendedDescription2,
+                   userFieldText40,
+                    relatedZ1786B280289768220314AAAAAAAAACZ.oepnix, 
+                    revision, stockingUm, itemType,
+                    relatedCurrentPrimaryBillOfMaterial.numberOfComponents 
+                    WHERE (item = '^^item^^' AND site='^^site^^' and revision = '^^revision^^') 
+                     ORDER BY item,site,revision]]&gt; 
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>If Revision &lt;&gt; Blanks</comment>
+  </data>
+  <data name="GetSingleLevelBOMParentItemRevision" xml:space="preserve">
+    <value>&lt;QueryList name='queryListBillofMaterialComponent_BOMUPLOAD01' domainClass='com.mapics.epdm.BillOfMaterialComponent' includeMetaData='true' maxReturned='1000'&gt;
+&lt;Pql&gt;
+&lt;![CDATA[SELECT 
+                      site,
+                       parentItem,
+                       parentItemRevision,
+                       alternateBomId,
+                       componentItem,
+                       componentItemRevision,
+                        token,
+                        userSequence1,
+                        quantityPerUnit,
+                        relatedComponentItemRevision.description,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription1,
+relatedComponentItemRevision.relatedItemRevisionPurchase.extendedDescription2,
+userFieldCodeA,
+operationWhereFirstUsed, relatedComponentItemRevision.stockingUm, 
+ relatedComponentItemRevision.currentBasePriceUm,
+ relatedComponentItemRevision.itemType,
+ relatedComponentItemRevision.relatedZ1786B280289768220314AAAAAAAAACZ.oepnix 
+WHERE (parentItem = '^^parentItem^^' AND site= '^^site^^' AND parentItemRevision='^^parentItemRevision^^')
+ORDER BY userSequence1,componentItem]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>Bill of Materials - Single Level BOM fetch</comment>
+  </data>
+  <data name="GetItemDetailsCurRevision" xml:space="preserve">
+    <value>&lt;QueryList name='queryListItemRevision_BOMUPLOADTOOL' domainClass='com.mapics.epdm.ItemRevision' includeMetaData='true' maxReturned='1'&gt;
+&lt;Pql&gt;&lt;![CDATA[SELECT item,
+                  description,
+                  drawingNumber,  
+                   relatedItemRevisionPurchase.extendedDescription1,
+                   relatedItemRevisionPurchase.extendedDescription2,
+                   userFieldText40,
+                    relatedZ1786B280289768220314AAAAAAAAACZ.oepnix, 
+                    relatedCurrentItemRevision.currentRevision, stockingUm, itemType,
+                    relatedCurrentPrimaryBillOfMaterial.numberOfComponents 
+                    WHERE (item = '^^item^^' AND site='^^site^^')
+                     ORDER BY item,site,createDate desc]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>GetItemDetails Latest/Current Revision details</comment>
+  </data>
+  <data name="GetParentItemRevisionByParentItemSite" xml:space="preserve">
+    <value>&lt;QueryList name='queryListBillofMaterial_General' domainClass='com.mapics.epdm.BillOfMaterial' includeMetaData='true' maxReturned='1'&gt;
+&lt;Pql&gt;
+&lt;![CDATA[SELECT site,relatedItemRevision.itemAccountingClass,
+
+                          relatedItemRevision.itemType,parentItem,
+
+                          relatedItemRevision.description,parentItemRevision,
+
+                          alternateBomId,numberOfComponents,standardBatchQuantity,
+
+                          relatedItemRevision.currentBasePrice,
+
+                          relatedItemRevision.currentBasePriceClass,
+
+                          relatedItemRevision.alternateItem,userFieldText40,
+
+                          relatedItemRevision.relatedEnterpriseItem.relatedItem.relatedItemRelease.relatedItem.location,
+
+                          createDate REQUIRED relatedItemRevision.relatedEnterpriseItem,
+
+                          relatedItemRevision WHERE (parentItem = '^^parentItem^^' AND site= '^^site^^') ORDER BY site,parentItem,createDate desc]]&gt;
+&lt;/Pql&gt;
+&lt;/QueryList&gt;</value>
+    <comment>Get Latest Revision for Item Number and Site</comment>
+  </data>
+</root>

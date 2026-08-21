@@ -1,0 +1,117 @@
+﻿
+.tabsMasterDiv {
+    float: left;
+    width: 100%;
+    min-height: 750px;
+}
+.GridTable{
+    overflow:hidden;
+}
+.Grid{
+    width:100%;
+}
+.GridBOM
+{
+    width:70%;
+    align-content:center;
+}
+.GridFooter{
+    text-align:center;
+}
+.GridCustomAltRowClass {
+    background-color: #DDDDDC;
+    background-image: none;
+} 
+.CancelButton {
+    float: right;
+    margin-right: 10px;
+}
+.grid-col {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+
+}
+.ui-jqgrid tr.jqgrow td {
+    white-space: pre-wrap; 
+    overflow: hidden;
+    height: auto;
+    vertical-align: middle;
+   
+}
+.ui-jqgrid .ui-jqgrid-labels th.ui-th-column {
+    height: 20px;
+    font-weight: bold;
+}
+.ui-jqgrid tr.jqgrow td {
+    font-weight: normal;
+    border-bottom-width: 1px;
+    border-bottom-color: inherit;
+    border-bottom-style: solid;
+    font-weight: normal;
+}
+.ui-tabs .ui-tabs-panel {
+    display: block;
+    padding: 5px 1px 1px 1px ;
+}
+.jqgrid-header {
+    background: #FF9C00 url(~/Scripts/JQGrid/Redmond/Images/ui-icons_7891AF_256x240.png) repeat-x scroll 50% 50%;
+    border: 1px solid #4297D7;
+    color: #FF0000;
+    font-weight: bold;
+}
+
+.lblUserManagement {
+    font-family: Calibri;
+    color: #4171a6;
+    font-weight: bold;
+    width: 100px;
+    max-width: 100%;
+    font-weight: 700;
+}
+.grayButtonRoundUser {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    background-color: #045C97;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    height: 32px;
+    width: 500px;
+    margin-left: 30px
+}
+
+.grayButtonRoundUser:hover {
+    border: 1px solid #045C97;
+    background-color: #045C97;
+    color: white;
+    text-align: center;
+}
+.divUserAlignCenter{
+    width:850px;
+    margin-left:auto;
+    padding-top:20px;
+    margin-right:auto;
+}
+.divMainUserGrid {
+    width:100%;margin-top:20px;
+}
+.divUserAlignLeft {
+    width: 850px;  
+    padding-top: 20px;
+    margin-right: auto;
+}
+.divAddUserButtons {
+    height: 40px;
+    padding: 8px,4px;
+    width: 15%;
+    /*margin:auto;*/
+}
+.evenTableRow {
+    background-color: #e8eef4;
+}
+
+.oddTableRow {
+    background-color: #e8eef4;
+}

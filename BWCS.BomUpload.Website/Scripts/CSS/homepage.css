@@ -1,0 +1,484 @@
+﻿.Header {
+    background: linear-gradient(#D3DCE1,#DBE2E8,#E7EFF2, #E7EFF2);
+}
+
+.bg-primary {
+    background-color: #2780E3 !important
+}
+
+li.active a {
+    background-color: yellow;
+}
+
+.Header-Content {
+    width: 98%;
+    height: 60px;
+}
+
+body {
+    background-color: #FFFFFF;
+    border-color: #E4F4FA;
+    min-height: 650px;
+}
+
+.Logo {
+    width: 15%;
+    float: left;
+}
+
+.divTitle {
+    float: left;
+    width: 50%;
+    margin-left: 360px;
+    height: 50px;
+    padding-top: 10px;
+    color: #337ab7;
+    font-family: "Calibri";
+    font-size: 26pt;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.divWelcome {
+    width: 30%;
+    height: 80px;
+}
+
+.divMenus {
+    float: right;
+}
+
+.Logo-img {
+    float: left;
+    height: 50px;
+}
+
+.navSignOut {
+    float: right !important;
+    margin-right: -1px;
+}
+
+.Home {
+    width: 3%;
+    height: 45px;
+    float: left;
+}
+
+.logo-Home {
+    float: left;
+    width: 31px;
+    height: 30px;
+    position: relative;
+    margin: 8px 10px 5px 5px;
+}
+
+.ProjectTitle {
+    width: 79%;
+    height: 96px;
+    float: right;
+}
+
+    .ProjectTitle h1 {
+        padding-top: 10px;
+        width: 65%;
+        font-family: Lato;
+        color: #007fac;
+        text-align: center;
+        float: left;
+        align-content: center;
+    }
+
+
+.footerContent {
+    border: none;
+    height: 10px;
+    font-family: Lato;
+    font-size: 0.9em;
+    color: #007fac;
+    margin-top: 12%;
+    margin-left: 10px;
+    display: block;
+    text-align: center
+}
+
+.renderBody {
+    height: 80%;
+    width: 100%;
+}
+
+
+.tabsDiv {
+    float: left;
+    width: 100%;
+    min-height: 629px;
+}
+
+.TopDiv {
+    width: 100%;
+    height: 35%;
+    float: left;
+    margin-top: 10px;
+}
+
+.Bottom {
+    width: 100%;
+    height: 33%;
+    float: left;
+}
+
+.divLeft {
+    width: 50%;
+    height: 10%;
+    float: left;
+    border: 2px;
+    font-family: 20px
+}
+
+.divRight {
+    width: 50%;
+    height: 10%;
+    float: right;
+    border: 2px;
+}
+
+.divCenter {
+    display: inline-block;
+    width: 33%;
+    height: 10%;
+    border: 2px;
+}
+
+.divSearch {
+    width: 100%;
+    height: 100%;
+    float: left;
+}
+
+.divSearchRow {
+    height: 100%;
+    width: 100%;
+    margin-top: 1%;
+}
+
+.divSearchResultGrid {
+    display: inline-block;
+    width: 100%;
+    margin-top: 1px;
+}
+
+.innerDiv {
+    width: 50%;
+    height: 10%;
+    font-size: 12px;
+    float: left;
+}
+
+.innerDivPart {
+    width: 50%;
+    height: 10%;
+    font-size: 12px;
+    float: right;
+}
+
+.divDescription {
+    width: 100%;
+    height: 10%;
+    font-size: 12px;
+    float: left;
+}
+
+.divlblDescription {
+    width: 25%;
+    height: 10%;
+    font-size: 12px;
+    float: left;
+}
+
+.divAddRow {
+    height: 100%;
+    width: 100%;
+}
+
+
+.divBtnRow {
+    height: 100%;
+    width: 960px;
+}
+
+.drpdownCustom {
+    width: 80%;
+    height: 13%;
+    border-radius: 4px;
+    border: 1px solid #ccc
+}
+
+.txtCustom {
+    width: 80%;
+    height: 14%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.btnSaveDefault {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    font-size: large;
+    background-color: lightgray;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: black;
+    text-align: center;
+    height: 32px;
+    width: 100px;
+}
+
+
+.grayButtonRound {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    background-color: #045C97;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    height: 32px;
+    width: 100px;
+}
+
+    .grayButtonRound:hover {
+        border: 1px solid #045C97;
+        background-color: #045C97;
+        color: white;
+        text-align: center;
+    }
+
+.grayButtonRoundClear {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    background-color: #045C97;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    height: 32px;
+    width: 120px;
+}
+
+    .grayButtonRoundClear:hover {
+        border: 1px solid #045C97;
+        background-color: #045C97;
+        color: white;
+        text-align: center;
+    }
+
+.RedButtonRound {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    background-color: lightgray;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: Black;
+    height: 32px;
+    width: 100px;
+}
+
+    .RedButtonRound:hover {
+        border: 1px solid red;
+        background-color: red;
+        color: white;
+    }
+
+.GreenButtonRound {
+    border: 1px solid #045C97;
+    border-radius: 5px;
+    background-color: lightgray;
+    font-weight: bold;
+    padding: 2px 4px 4px 4px;
+    text-decoration: none;
+    display: inline-block;
+    color: Black;
+    text-align: center;
+    height: 32px;
+    width: 180px;
+}
+
+    .GreenButtonRound:hover {
+        border: 1px solid #059C41;
+        background-color: #059C41;
+        color: white;
+        text-align: center;
+    }
+
+.signout {
+    text-decoration: underline;
+}
+
+.nav a:hover {
+    color: #000;
+}
+
+.txtPartNumberDesc {
+    width: 600px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid;
+    background-color: #fff;
+}
+
+.innerDivAddMultiple {
+    width: 16%;
+    height: 10%;
+    font-size: 11px;
+    /*float: left;*/
+}
+
+.divLeftAddMultiple {
+    width: 33%;
+    height: 10%;
+    float: left;
+    border: 2px;
+    font-family: 20px
+}
+
+.divRightAddMultiple {
+    width: 33%;
+    height: 10%;
+    float: right;
+    border: 2px;
+}
+
+.divCenterAddMultiple {
+    display: inline-block;
+    width: 33%;
+    height: 10%;
+    border: 10px;
+}
+
+.customerAddMultiple {
+    width: 100%;
+    height: 10%;
+    float: left;
+    border: 2px;
+    font-family: 20px
+}
+
+.divBtnRightAddMultiple {
+    height: 10%;
+    float: right;
+    border: 2px;
+}
+
+.innerDivAddEdit1 {
+    width: 12%;
+    height: 10%;
+    font-size: 12px;
+    float: left;
+}
+
+.innerDivAddEdit2 {
+    width: 20%;
+    height: 10%;
+    font-size: 12px;
+    float: left;
+}
+
+.required:after {
+    content: " *";
+    color: #f00;
+}
+
+.innerDivAddMultipleMiddle {
+    width: 120px;
+    height: 40px;
+    font-size: 12px;
+    float: left;
+    padding: 8px,4px;
+}
+
+.innerDivAddMultipleBottom {
+    height: 40px;
+    font-size: 12px;
+    float: left;
+    padding: 8px,4px;
+}
+
+.innerDivAddMultipleBottomNew {
+    height: 40px;
+    font-size: 12px;
+    float: left;
+    padding: 8px,4px;
+}
+
+.addMultipleLabel {
+    max-width: 100%;
+    font-weight: 700;
+    padding: 8px;
+}
+
+.divClear {
+    clear: both;
+}
+
+
+.drawingLink {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('../images/pageloader.gif');
+}
+
+/*.ui-jqgrid .loading {
+    left: 45%;
+    top: 2%;  
+    background-position-x: 50%;
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+    height: 25px;
+    width: 150px;
+}*/
+
+/*.ui-jqgrid .loading {
+    left: 43%;
+    top: 100%;
+    background-position-x: 50%;
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 220px;
+}*/
+
+.ui-jqgrid .loading {
+    left: 43%;
+    top: 2%;
+    background-position-x: 50%;
+    background-position-y: 50%;
+    background-repeat: no-repeat;
+    height: 25px;
+    width: 220px;
+}
+
+.button:disabled,
+.button[disabled] {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+}
+
+.footerStyle {
+    padding-left: 40%;
+    font-size: 10px;
+    color: #007fac;
+    font-family: Lato;
+}
