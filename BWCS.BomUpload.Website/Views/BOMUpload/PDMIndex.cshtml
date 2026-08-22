@@ -168,14 +168,14 @@
         margin-top: 10px;
     }
 
-    .btn-save:disabled {
+    .btnLast:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         background-color: #cccccc;
         color: #666;
     }
 
-    .btn-save:not(:disabled) {
+    .btnLast:not(:disabled) {
         cursor: pointer;
     }
 
@@ -230,7 +230,7 @@
             <td>
                 <!-- Maintenance Alert Container -->
                 <div id="maintenanceContainer" class="maintenance-container">
-                    <h1 id="maintenanceHeader">⚠️ System Under Maintenance every Saturday from 2230 to 0500 Sunday</h1>
+                    <h1 id="maintenanceHeader">⚠️ BOM upload will not be available from 2230 Saturdays to 0500 Sundays Central time.</h1>
                     <p id="maintenanceLabel" class="maintenance-message"></p>
                     <p id="maintenanceTime" class="maintenance-time"></p>
                 </div>
@@ -347,10 +347,10 @@
         /* Maintenance Configuration Start */
 
         var maintenanceConfig = {
-            startDay: 'Thursday',      // Saturday
-            startTime: '22:50',        // 22:30 (10:30 PM)
-            endDay: 'Friday',          // Sunday
-            endTime: '22:00',          // 05:00 (5:00 AM)
+            startDay: 'Saturday',      // Saturday
+            startTime: '21:12',        // 22:30 (10:30 PM)
+            endDay: 'Saturday',          // Sunday
+            endTime: '21:15',          // 05:00 (5:00 AM)
             timeZone: 'America/Chicago' // Central Time
         };
 
@@ -427,17 +427,46 @@ function getDayNumber(dayName) {
                 console.log('Config End: ' + maintenanceConfig.endDay + ' ' + maintenanceConfig.endTime + ' (Day: ' + endDay + ', Time: ' + maintenanceEndTime + 'min)');
                 console.log('Current: Day ' + currentDay + ', Time ' + currentTime + 'min (' + now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0') + ')');
 
-                // Check if start day and time >= start time
-                if (currentDay === startDay && currentTime >= maintenanceStartTime) {
-                    console.log('✓ Maintenance Active: Start Window');
-                    return true;
+                // CASE 1: Same day maintenance (e.g., Saturday 05:55 to Saturday 06:50)
+                if (startDay === endDay) {
+                    console.log('✓ Same-day maintenance window');
+
+                    if (currentDay === startDay &&
+                        currentTime >= maintenanceStartTime &&
+                        currentTime < maintenanceEndTime) {
+
+                        console.log('✓ MAINTENANCE ACTIVE (Same-day window)');
+                        return true;
+                    }
+                }
+                // CASE 2: Multi-day maintenance (e.g., Saturday 22:30 to Sunday 05:00)
+                else {
+                    console.log('✓ Multi-day maintenance window');
+
+                    // Check if start day and time >= start time
+                    if (currentDay === startDay && currentTime >= maintenanceStartTime) {
+                        console.log('✓ Maintenance Active: Start Window');
+                        return true;
+                    }
+
+                    // Check if end day and time < end time
+                    if (currentDay === endDay && currentTime < maintenanceEndTime) {
+                        console.log('✓ Maintenance Active: End Window');
+                        return true;
+                    }
                 }
 
-                // Check if end day and time < end time
-                if (currentDay === endDay && currentTime < maintenanceEndTime) {
-                    console.log('✓ Maintenance Active: End Window');
-                    return true;
-                }
+                //// Check if start day and time >= start time
+                //if (currentDay === startDay && currentTime >= maintenanceStartTime) {
+                //    console.log('✓ Maintenance Active: Start Window');
+                //    return true;
+                //}
+
+                //// Check if end day and time < end time
+                //if (currentDay === endDay && currentTime < maintenanceEndTime) {
+                //    console.log('✓ Maintenance Active: End Window');
+                //    return true;
+                //}
 
                 console.log('✗ Maintenance Not Active');
                 return false;
@@ -485,10 +514,10 @@ function getDayNumber(dayName) {
         function updateMaintenanceStatus() {
             $jQ = jQuery.noConflict(); 
             var underMaintenance = isMaintenanceWindow();
-            alert(underMaintenance);
+            // alert(underMaintenance);
             if (underMaintenance) {
                 $jQ('#maintenanceContainer').fadeIn();
-                
+                // BOM upload will not be available from 2230 Saturdays to 0500 Sundays Central time
                 $jQ('#maintenanceLabel').text(
                     'Weekly scheduled maintenance is in progress (Every ' +
                     maintenanceConfig.startDay + ' ' + maintenanceConfig.startTime +
@@ -506,18 +535,13 @@ function getDayNumber(dayName) {
 
                 if (underMaintenance) {
                     // Disable controls
-                    $jQ("#btnUploadBomToXA").prop("disabled", true); // .text('Save (Disabled - Under Maintenance)');
-                    //$jQ('#txtName, #txtEmail, #txtMessage').prop('disabled', true);
-                    //alert('Upload disabled');
+                    $jQ("#btnUploadBomToXA").prop("disabled", true); // .text('Upload BOM to XA');
                 }
                 else {
                     $jQ('#maintenanceContainer').fadeOut();  
                     // Enable controls
                     $jQ("#btnUploadBomToXA").prop("disabled", false); // .text('Save');
-                    //$jQ('#txtName, #txtEmail, #txtMessage').prop('disabled', false);
-                    //alert('Upload enabled'); 
                 }
-
             }
         }
 
@@ -675,18 +699,18 @@ function getDayNumber(dayName) {
             // Check every second (for demo, reduce to 60000ms for production)
             setInterval(function () {
                 var now = new Date();
-                var hours = String(now.getHours()).padStart(2, '0');
-                var minutes = String(now.getMinutes()).padStart(2, '0');
-                var seconds = String(now.getSeconds()).padStart(2, '0');
+                //var hours = String(now.getHours()).padStart(2, '0');
+                //var minutes = String(now.getMinutes()).padStart(2, '0');
+                //var seconds = String(now.getSeconds()).padStart(2, '0');
 
                 if (isMaintenanceWindow()) {
                     $jQ('#maintenanceTime').text(
-                        'Current time: ' + hours + ':' + minutes + ':' + seconds
+                        'Current time: ' + formatTime(now) 
                     );
                 }
             }, 1000);
 
-
+            //'Current time: ' + hours + ':' + minutes + ':' + seconds
 
 
 
@@ -946,7 +970,10 @@ function getDayNumber(dayName) {
 
         // loadonce: true, needs to work SORT, column Text filter
         // The below method is triggered when GetBOMFromMapics is clicked.
-        function GetBOMComponents() {
+        function GetBOMComponents()
+        {
+            if (isMaintenanceWindow()) return; 
+
             // Check BOM existence and proceed.
             CheckItemExists();
             $jQ("#BOMUploadGrid").show();
@@ -1131,7 +1158,11 @@ function getDayNumber(dayName) {
                 emptyrecords: 'No records found!',
                 gridComplete: function () {
                     rowsToColor = jQuery("#BOMUploadGrid").getDataIDs();
-                    $jQ("#btnUploadBomToXA").prop("disabled", false).css("background-color", "").removeAttr("title");
+
+                    if (isMaintenanceWindow())  
+                        $jQ("#btnUploadBomToXA").prop("disabled", true).css("background-color", "grey").attr("title", "BOM cannot be uploaded when Weekly scheduled maintenance is in progress.");
+                    else
+                        $jQ("#btnUploadBomToXA").prop("disabled", false).css("background-color", "").removeAttr("title");
 
                     for (var i = 0; i < rowsToColor.length; i++) {
                         var flag = $jQ("#BOMUploadGrid").getCell(rowsToColor[i], "Flag");
