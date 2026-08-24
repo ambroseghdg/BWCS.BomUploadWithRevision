@@ -347,10 +347,10 @@
         /* Maintenance Configuration Start */
 
         var maintenanceConfig = {
-            startDay: 'Saturday',      // Saturday
-            startTime: '22:05',        // 22:30 (10:30 PM)
-            endDay: 'Saturday',          // Sunday
-            endTime: '22:08',          // 05:00 (5:00 AM)
+            startDay: 'Monday',      // Saturday
+            startTime: '01:55',        // 22:30 (10:30 PM)
+            endDay: 'Monday',          // Sunday
+            endTime: '02:00',          // 05:00 (5:00 AM)
             timeZone: 'America/Chicago' // Central Time
         };
 
@@ -510,6 +510,8 @@
                 var currentDay = centralTimeInfo.day;
                 var currentTime = centralTimeInfo.timeInMinutes;
 
+                // alert('CST: '+formatTime(getCurrentTimeInCentralTime())); 
+
                 // alert(maintenanceStartTime);
                 // alert("|" + currentDay + "|" + currentTime);
 
@@ -647,11 +649,11 @@
          */
         function formatTime(date) {
             var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            var day = daysOfWeek[date.getDay()];
-            var hours = String(date.getHours()).padStart(2, '0');
-            var minutes = String(date.getMinutes()).padStart(2, '0');
-            var month = String(date.getMonth() + 1).padStart(2, '0');
-            var dayOfMonth = String(date.getDate()).padStart(2, '0');
+            var day = daysOfWeek[date.day]; //.getDay()
+            var hours = String(date.hours).padStart(2, '0'); // .getHours()
+            var minutes = String(date.minutes).padStart(2, '0');    // .getMinutes()
+            var month = String(date.month + 1).padStart(2, '0');  // .getMonth()
+            var dayOfMonth = String(date.dayOfMonth).padStart(2, '0'); // .getDate()
 
             return day + ', ' + month + '/' + dayOfMonth + ' at ' + hours + ':' + minutes;
         }
@@ -795,14 +797,14 @@
 
             // Check every second (for demo, reduce to 60000ms for production)
             setInterval(function () {
-                var now = new Date();
+                //var now = new Date();
                 //var hours = String(now.getHours()).padStart(2, '0');
                 //var minutes = String(now.getMinutes()).padStart(2, '0');
                 //var seconds = String(now.getSeconds()).padStart(2, '0');
 
                 if (isMaintenanceWindow()) {
                     $jQ('#maintenanceTime').text(
-                        'Current time: ' + formatTime(now)
+                        'Current time: ' + formatTime(getCurrentTimeInCentralTime())
                     );
                 }
             }, 1000);
