@@ -3,15 +3,21 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<!-- DECLARE GLOBAL VARIABLE -->
+<script type="text/javascript">
+    var userNoteMessage = "";  // Default empty value // DECLARE GLOBAL VARIABLE  
+</script>
+
 @if (TempData["BOMUploadSuccessMsg"] != null && TempData["BOMUploadSuccessMsg"].ToString().Trim().Length > 7)
 {
     string strFullSuccMsg = TempData["BOMUploadSuccessMsg"].ToString();
-    string strMsgToUser = TempData["BOMUploadUserMsg"].ToString();     
+    string strMsgToUser = TempData["BOMUploadUserMsg"].ToString();
     <script type="text/javascript">
         window.onload = function () { alert("@strFullSuccMsg"); };
 
-        var userNoteMessage = '@strMsgToUser';  //bring it to client side and use further 
-        
+        userNoteMessage = '@strMsgToUser';  //bring it to client side and use further
+
         @*function NotInUseSetUserMessageNotification() {
             try {
 
@@ -579,7 +585,10 @@
                             $jQ('#lblNoDataMessage').html("");
 
                             // it will show error notification to User
-                            if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                            if (userNoteMessage !== null &&
+                                userNoteMessage !== undefined) {
+                                if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                            }
                         }
                     },
                     error: function (result) {
@@ -818,7 +827,10 @@
                 emptyrecords: 'No records found!',
                 loadComplete: function (data) {
                     // it will show error notification to User
-                    if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                    if (userNoteMessage !== null &&
+                        userNoteMessage !== undefined) {
+                        if (userNoteMessage.length > 0) $jQ('#lblNoDataMessage').html(userNoteMessage);
+                    }
                 },
                 ondblClickRow: function (MasterCode, iRow, iCol, e) {
 

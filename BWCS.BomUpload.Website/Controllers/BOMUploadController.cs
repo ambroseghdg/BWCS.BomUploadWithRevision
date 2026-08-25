@@ -800,12 +800,28 @@ namespace BWCS.BomUpload.Website.Controllers
 
                         // Child Item Revision check required in comparision Due to revision data coming from PDM data.  
                         // New BOM list - Component Item number exist in PDM but not in XA BOM component. (Note: Item exists in ITMRVA). So add record in XA BOM. 
-                        var NewBOM = PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
+                        List<Item> NewBOM = new List<Item>();
+                       
+                        if (environment != "FF-17 ")
+                        { 
+                            NewBOM = (List<Item>)PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
                                                                  join xabom in XAbomComponentList
                                                                  on new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() } 
                                                                  equals new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
                                                                  // on pdmbom.ComponentItemNumber equals xabom.ComponentItemNumber // PREV
                                                                  select pdmbom).ToList());
+                        }
+                        else 
+                        {
+                            // ENV FF-17 
+                            NewBOM = (List<Item>)PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
+                                                                join xabom in XAbomComponentList
+                                                                on new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper() }
+                                                                equals new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper() }
+                                                                // on pdmbom.ComponentItemNumber equals xabom.ComponentItemNumber // PREV
+                                                                select pdmbom).ToList());
+                        }
+
                         NewBOMList = NewBOM.ToList();
 
                         var BalloonChangeBOM = from xabom in XAbomComponentList
