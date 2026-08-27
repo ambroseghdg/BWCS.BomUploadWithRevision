@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -651,8 +652,57 @@ namespace BWCS.BomUpload.Website.Controllers
             }
 
         }
+        private dynamic GetJoinKeyNewBOM(dynamic item, string environment)
+        {  
+            if (environment == "FF-17")
+                return new { a = item.UserSequence, c = item.ComponentItemNumber.ToUpper() };
 
+            return new { a = item.UserSequence, c = item.ComponentItemNumber.ToUpper(), r = item.ComponentItemRevision.ToUpper() }; 
 
+            //on new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() }
+            //equals new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() }
+        }
+        private dynamic GetJoinKeyBallonChangeBOM(dynamic item, string environment)
+        {
+            //on new { c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
+            //equals new { c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() } 
+
+            if (environment != "FF-17")
+                return new { c = item.ComponentItemNumber.ToUpper(), r = item.ComponentItemRevision.ToUpper() };
+
+            return new { c = item.ComponentItemNumber.ToUpper() };
+        }
+        private dynamic GetJoinKeyDeleteBOM(dynamic item, string environment)
+        {
+            //on new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() }
+            //equals new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() }
+
+            if (environment != "FF-17")
+                return new { a = item.UserSequence, c = item.ComponentItemNumber.ToUpper(), r = item.ComponentItemRevision.ToUpper() };
+
+            return new { a = item.UserSequence, c = item.ComponentItemNumber.ToUpper() };
+        }
+
+        private dynamic GetJoinKeyNoChangeBOM(dynamic item, string environment)
+        {
+            if (environment == "FF-17")
+                return new { a = item.UserSequence, b = item.Qty, c = item.ComponentItemNumber.ToUpper() };
+
+            return new { a = item.UserSequence, b = item.Qty, c = item.ComponentItemNumber.ToUpper(), r = item.ComponentItemRevision.ToUpper() };
+
+            //on new { a = xabom.UserSequence, b = xabom.Qty, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() }
+            //equals new { a = pdmbom.UserSequence, b = pdmbom.Qty, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() }
+        }
+        private dynamic GetJoinKeyChangeBOM(dynamic item, string environment)
+        {
+            if (environment == "FF-17")
+                return new { c = item.ComponentItemNumber.ToUpper(), s = item.UserSequence };
+
+            return new { c = item.ComponentItemNumber.ToUpper(), s = item.UserSequence, r = item.ComponentItemRevision.ToUpper() };
+
+            // on new { c = xabom.ComponentItemNumber.ToUpper(), s = xabom.UserSequence, r = xabom.ComponentItemRevision.ToUpper() }
+            // equals new { c = pdmbom.ComponentItemNumber.ToUpper(), s = pdmbom.UserSequence, r = pdmbom.ComponentItemRevision.ToUpper() }
+        }
         /// <summary>
         /// Compare PDM and XA BOM data for the parent item and prepare final resultset.
         /// </summary>
@@ -734,7 +784,16 @@ namespace BWCS.BomUpload.Website.Controllers
                     isValidXAParentItem = ValidateItemInXARevision(itemNumber, environment, site, ApplicationLatestParentItemRevision, out strUoM, out strITTYP, out strItmDes);
 
                 PDMbomComponentList = clsXA.GetPDMComponentsRevisionFromSQL(itemNumber, strItem2DEnv, site, ApplicationLatestParentItemRevision, loggedinUser);
-                ////    PDMbomComponentList = clsXA.GetPDMComponentsFromSQL(itemNumber, strItem2DEnv, site, loggedinUser);
+
+                // OMIT all Child Revision Number from SQL for environment FF-17
+                if (environment == "FF-17")
+                {
+                    for(int rowIdx = 0; rowIdx < PDMbomComponentList.Count; rowIdx++)
+                    {
+                        PDMbomComponentList[rowIdx].ComponentItemRevision = "";
+                        // System.Console.Write(PDMbomComponentList[rowIdx].ComponentItemNumber); 
+                    }
+                }
 
                 // // urlSQLParentItemRevision
                 // Call Logout XA session 1
@@ -800,35 +859,17 @@ namespace BWCS.BomUpload.Website.Controllers
 
                         // Child Item Revision check required in comparision Due to revision data coming from PDM data.  
                         // New BOM list - Component Item number exist in PDM but not in XA BOM component. (Note: Item exists in ITMRVA). So add record in XA BOM. 
-                        List<Item> NewBOM = new List<Item>();
                        
-                        if (environment != "FF-17 ")
-                        { 
-                            NewBOM = (List<Item>)PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
-                                                                 join xabom in XAbomComponentList
-                                                                 on new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() } 
-                                                                 equals new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
-                                                                 // on pdmbom.ComponentItemNumber equals xabom.ComponentItemNumber // PREV
-                                                                 select pdmbom).ToList());
-                        }
-                        else 
-                        {
-                            // ENV FF-17 
-                            NewBOM = (List<Item>)PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
+                        var NewBOM = PDMbomComponentList.Except((from pdmbom in PDMbomComponentList
                                                                 join xabom in XAbomComponentList
-                                                                on new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper() }
-                                                                equals new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper() }
-                                                                // on pdmbom.ComponentItemNumber equals xabom.ComponentItemNumber // PREV
+                                                                on GetJoinKeyNewBOM(pdmbom, environment) equals GetJoinKeyNewBOM(xabom, environment) 
                                                                 select pdmbom).ToList());
-                        }
-
                         NewBOMList = NewBOM.ToList();
-
-                        var BalloonChangeBOM = from xabom in XAbomComponentList
+                       
+                        IEnumerable<Item> BalloonChangeBOM;
+                        BalloonChangeBOM = from xabom in XAbomComponentList
                                                join pdmbom in PDMbomComponentList
-                                               // on new { c = xabom.ComponentItemNumber } equals new { c = pdmbom.ComponentItemNumber  } // PREV
-                                               on new { c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
-                                               equals new { c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() } 
+                                               on GetJoinKeyBallonChangeBOM(xabom, environment) equals GetJoinKeyBallonChangeBOM(pdmbom, environment)
                                                where pdmbom.UserSequence != xabom.UserSequence
                                                select new Item
                                                {
@@ -862,33 +903,28 @@ namespace BWCS.BomUpload.Website.Controllers
 
                         BallonChangeBOMList = BalloonChangeBOM.ToList();
 
+                        // BallonChangeBOMList on new { c = xabom.ComponentItemNumber } equals new { c = pdmbom.ComponentItemNumber  } // PREV  
+                        // on new { c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
+                        // equals new { c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() } 
+
                         // Delete BOM list - Component exists in XA BOM but not in PDM. (Note: PDM is the source of truth). So delete record from XA BOM.
                         var DeleteBOM = XAbomComponentList.Except((from xabom in XAbomComponentList
                                                                    join pdmbom in PDMbomComponentList
-                                                                   // on xabom.ComponentItemNumber equals pdmbom.ComponentItemNumber // PREV
-                                                                   on new { a = xabom.UserSequence, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
-                                                                   equals new { a = pdmbom.UserSequence, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() }
+                                                                   on GetJoinKeyDeleteBOM(xabom, environment) equals GetJoinKeyDeleteBOM(pdmbom, environment)
                                                                    select xabom).ToList());
-                        //on xabom.ComponentItemNumber equals pdmbom.ComponentItemNumber
+                     
                         DeleteBOMList = DeleteBOM.ToList();
 
                         // No Change BOM List - There is no change in data between PDM and XA BOM. (No action is required)
                         var NoChangeBOM = from xabom in XAbomComponentList
                                           join pdmbom in PDMbomComponentList
-                                          on new { a = xabom.UserSequence, b = xabom.Qty, c = xabom.ComponentItemNumber.ToUpper(), r = xabom.ComponentItemRevision.ToUpper() } 
-                                          equals new { a = pdmbom.UserSequence, b = pdmbom.Qty, c = pdmbom.ComponentItemNumber.ToUpper(), r = pdmbom.ComponentItemRevision.ToUpper() }
-                                          //on new { a = pdmbom.UserSequence, b = pdmbom.Qty, c = pdmbom.ComponentItemNumber } equals new { a = xabom.UserSequence, b = xabom.Qty, c = xabom.ComponentItemNumber }
-                                          select xabom; //pdmbom
+                                          on GetJoinKeyNoChangeBOM(xabom, environment) equals GetJoinKeyNoChangeBOM(pdmbom, environment)  
+                                          select xabom; // pdmbom
                         NoChangeBOMList = NoChangeBOM.ToList();
 
-                        //var ChangeBOM = from pdmbom in PDMbomComponentList
-                        //                join xabom in XAbomComponentList
-
                         var ChangeBOM = from xabom in XAbomComponentList
-                                        join pdmbom in PDMbomComponentList
-                                        // on new { c = xabom.ComponentItemNumber } equals new { c = pdmbom.ComponentItemNumber  } // PREV
-                                        on new { c = xabom.ComponentItemNumber.ToUpper(), s = xabom.UserSequence, r = xabom.ComponentItemRevision.ToUpper() } 
-                                        equals new { c = pdmbom.ComponentItemNumber.ToUpper(), s = pdmbom.UserSequence, r = pdmbom.ComponentItemRevision.ToUpper() }
+                                        join pdmbom in PDMbomComponentList 
+                                        on GetJoinKeyChangeBOM(xabom, environment) equals GetJoinKeyChangeBOM(pdmbom, environment) 
                                         where pdmbom.UserSequence != xabom.UserSequence || pdmbom.Qty != xabom.Qty
                                         select new Item
                                         {
@@ -920,8 +956,6 @@ namespace BWCS.BomUpload.Website.Controllers
                                             IsQuantityChanged = pdmbom.Qty != xabom.Qty ? 1 : 0
                                         };
 
-                        //select xabom ;  select pdmbom;
-                        // { a = pdmbom.UserSequence, b = pdmbom.Qty } equals new { a = xabom.UserSequence, b = xabom.Qty }
                         ChangeBOMList = ChangeBOM.ToList();
                         SkippedBOMList = NewBOMList.ToList();
 
@@ -930,6 +964,7 @@ namespace BWCS.BomUpload.Website.Controllers
                         // SET item.ParentItemRevision = strParentItemRevision for NEW item  
                         NewBOMList.Where(item => item.Flag == "1").ToList().ForEach(item => 
                             { item.Action = "Add"; item.Order = 1; item.Note = "Is not in XA BOM"; item.ParentItemRevision = strParentItemRevision; });  // Set Action to Add if new item and the item exists in item revision file.
+                        
                         SkippedBOMList.Where(item => item.Flag == "0").ToList().ForEach(item => { item.Action = "Skipped"; item.Order = 4; item.Note = "Item doesn't exist in XA"; }); // Set Action to Skipped if it is a new item but does not exist in item revision file.
                         DeleteBOMList.ForEach(item => { item.Action = "Delete"; item.Order = 3; item.Note = "Item is not in SolidWorks BOM, but it is in XA BOM."; });// Set Action to Delete if item exists in XA BOM but not in PDM data.
                         NoChangeBOMList.ForEach(item => { item.Action = "No Change"; item.Order = 5; item.Note = "Same in both SolidWorks (SW) and XA"; }); // Set Action to No Change if there is no change to item usersequence or qty in PDM and XA BOM.
