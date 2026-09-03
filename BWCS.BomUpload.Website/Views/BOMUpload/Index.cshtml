@@ -145,30 +145,76 @@
         top: 20% !important;
         z-index: 200;
     }
+
+    /* Maintainence Window styles */
+
+    .maintenance-container {
+        display: none;
+        background-color: #ffcccc;
+        border: 3px solid #ff0000;
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .maintenance-container h1 {
+            color: #ff0000;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+
+    .maintenance-message {
+        color: #cc0000;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .maintenance-time {
+        color: #999;
+        font-size: 12px;
+        margin-top: 10px;
+    }
 </style>
 
 <div style="height:100%;width:100%">
-    <div style="margin-left:500px">
-        <label id="lblenvironment" for="ddlEnv" style="color:gray;font-family:Calibri;font-size:14px;">Environment  </label>
-        <select style="color:#337ab7;font-family:Calibri;font-size:14px;height:25px;width:165px;border-radius:5px;margin-left:78px" id="ddlEnv" name="ddlEnv">
-        </select>
-    </div>
-    <br />
-    <div style="margin-left:500px;" id="divItemNumber">
-        <label id="lblItemNumber" for="txtItemNumber" style="color:gray;font-family:Calibri;font-size:14px;">Item Number  </label>
-        <input type="text" name="txtItemNumber" id="txtItemNumber" onfocus="this.select();" onmouseup="return false;" maxlength="15" style="color: #337ab7; font-family: Calibri; font-size: 14px;margin-left:75px; width:16%" />
-    </div>
-    <br />
-    <div style="margin-left:500px;" id="divDescription">
-        <label id="lblDescription" style="color:gray;font-family:Calibri;font-size:14px;">Description  </label>
-        <label id="lblDescriptionValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:90px"></label>
-    </div>
-    <br />
-    <div style="margin-left:500px;" id="divDrawingNumber">
-        <label id="lblDrawingNumber" style="color:gray;font-family:Calibri;font-size:14px;">Drawing Number  </label>
-        <label id="lblDrawingNumberValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:58px"></label>
-    </div>
-    <br />
+    <table>
+        <tr>
+            <td>
+                <div style="margin-left:500px">
+                    <label id="lblenvironment" for="ddlEnv" style="color:gray;font-family:Calibri;font-size:14px;">Environment  </label>
+                    <select style="color:#337ab7;font-family:Calibri;font-size:14px;height:25px;width:165px;border-radius:5px;margin-left:78px" id="ddlEnv" name="ddlEnv">
+                    </select>
+                </div>
+                <br />
+                <div style="margin-left:500px;" id="divItemNumber">
+                    <label id="lblItemNumber" for="txtItemNumber" style="color:gray;font-family:Calibri;font-size:14px;">Item Number  </label>
+                    <input type="text" name="txtItemNumber" id="txtItemNumber" onfocus="this.select();" onmouseup="return false;" maxlength="15" style="color: #337ab7; font-family: Calibri; font-size: 14px;margin-left:75px; width:16%" />
+                </div>
+                <br />
+                <div style="margin-left:500px;" id="divDescription">
+                    <label id="lblDescription" style="color:gray;font-family:Calibri;font-size:14px;">Description  </label>
+                    <label id="lblDescriptionValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:90px"></label>
+                </div>
+                <br />
+                <div style="margin-left:500px;" id="divDrawingNumber">
+                    <label id="lblDrawingNumber" style="color:gray;font-family:Calibri;font-size:14px;">Drawing Number  </label>
+                    <label id="lblDrawingNumberValue" style="color:#337ab7;font-family:Calibri;font-size:14px;margin-left:58px"></label>
+                </div>
+                <br />
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>
+                <!-- Maintenance Alert Container -->
+                <div id="maintenanceContainer" class="maintenance-container">
+                    <h1 id="maintenanceHeader">⚠️ Get BOM from XA will not be available from 2230 Saturdays to 0500 Sundays Central time.</h1>
+                    <p id="maintenanceLabel" class="maintenance-message"></p>
+                    <p id="maintenanceTime" class="maintenance-time"></p>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 <div style="height:100%;width:100%;margin-left:5px;">
     <p><label id="lblNoDataMessage" name="nodata" style="color: #FF4500; font-family: Calibri; font-weight: 400; "></label></p>
@@ -252,7 +298,302 @@
                 // var cookieString = cookieName + "=" + cookieValue + "; expires=" + expirationDate.toUTCString() + "; path=/";
             document.cookie = cookieString;
             // alert('Index - setEnvCookie after: ' + document.cookie);
-        }
+            }
+
+            /* Maintenance Configuration Start */
+
+            var maintenanceConfig = {
+                startDay: 'Friday',      // Saturday
+                startTime: '01:00',        // 22:30 (10:30 PM)
+                endDay: 'Friday',          // Sunday
+                endTime: '05:00',          // 05:00 (5:00 AM)
+                timeZone: 'America/Chicago' // Central Time
+            };
+
+            /*
+            var maintenanceConfig = {
+                startDay: 'Saturday',      // Saturday
+                startTime: '22:30',        // 22:30 (10:30 PM)
+                endDay: 'Sunday',          // Sunday
+                endTime: '05:00',          // 05:00 (5:00 AM)
+                timeZone: 'America/Chicago' // Central Time
+            };
+            */
+
+
+            /**
+             * Get current time in Central Time Zone (America/Chicago)
+             * Automatically handles Daylight Saving Time (DST)
+             * returns {Object} Central time information
+             */
+            /**
+     * Get current time in Central Time (America/Chicago)
+     * Automatically handles CST/CDT (DST)
+     */
+            function getCurrentTimeInCentralTime() {
+                try {
+                    const now = new Date();
+
+                    const parts = new Intl.DateTimeFormat('en-US', {
+                        timeZone: 'America/Chicago',
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    }).formatToParts(now);
+
+                    const get = (type) => parts.find(p => p.type === type)?.value;
+
+                    let hours = parseInt(get('hour'), 10);
+
+                    // Some environments can return "24" at midnight.
+                    if (hours === 24) {
+                        hours = 0;
+                    }
+
+                    const minutes = parseInt(get('minute'), 10);
+                    const seconds = parseInt(get('second'), 10);
+
+                    const dayName = get('weekday');
+
+                    const dayNames = {
+                        Sunday: 0,
+                        Monday: 1,
+                        Tuesday: 2,
+                        Wednesday: 3,
+                        Thursday: 4,
+                        Friday: 5,
+                        Saturday: 6
+                    };
+
+                    const day = dayNames[dayName];
+
+                    return {
+                        day: day,
+                        dayName: dayName,
+                        hours: hours,
+                        minutes: minutes,
+                        seconds: seconds,
+
+                        timeInMinutes: (hours * 60) + minutes,
+
+                        formatted:
+                            String(hours).padStart(2, '0') + ':' +
+                            String(minutes).padStart(2, '0') + ':' +
+                            String(seconds).padStart(2, '0'),
+
+                        date: now,
+
+                        year: parseInt(get('year'), 10),
+                        month: parseInt(get('month'), 10),
+                        dayOfMonth: parseInt(get('day'), 10)
+                    };
+
+                } catch (error) {
+                    console.error('Error getting Central Time:', error);
+                    return null;
+                }
+            }
+
+            /**
+             * Get day name from day number
+             */
+            function getDayName(dayNumber) {
+                var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[dayNumber] || 'Unknown';
+            }
+
+            /**
+        * Parse time string "HH:MM" to minutes
+        * param {string} timeString - Time in format "HH:MM"
+        * returns {number} Total minutes
+        */
+            function parseTimeToMinutes(timeString) {
+                try {
+                    var parts = timeString.split(':');
+                    var hours = parseInt(parts[0], 10);
+                    var minutes = parseInt(parts[1], 10);
+
+                    if (isNaN(hours) || isNaN(minutes)) {
+                        console.error('Invalid time format: ' + timeString);
+                        return 0;
+                    }
+
+                    return hours * 60 + minutes;
+                } catch (error) {
+                    console.error('Error parsing time:', error);
+                    return 0;
+                }
+            }
+
+            /**
+             * Get day number from day name
+             * param {string} dayName - Day name (e.g., "Saturday", "Sunday")
+             * returns { number } Day of week(0 = Sunday, 6 = Saturday)
+             */
+            function getDayNumber(dayName) {
+                var days = {
+                    'Sunday': 0,
+                    'Monday': 1,
+                    'Tuesday': 2,
+                    'Wednesday': 3,
+                    'Thursday': 4,
+                    'Friday': 5,
+                    'Saturday': 6
+                };
+
+                return days[dayName] !== undefined ? days[dayName] : -1;
+            }
+
+            /*
+             * Check if current time is within maintenance window
+             * Saturday 22:30 to Sunday 05:00 Central Time
+             */
+            function isMaintenanceWindow() {
+                try {
+                    // Parse times from config
+                    var maintenanceStartTime = parseTimeToMinutes(maintenanceConfig.startTime);
+                    var maintenanceEndTime = parseTimeToMinutes(maintenanceConfig.endTime);
+                    var startDay = getDayNumber(maintenanceConfig.startDay);
+                    var endDay = getDayNumber(maintenanceConfig.endDay);
+
+                    // Get CENTRAL TIME
+                    var centralTimeInfo = getCurrentTimeInCentralTime();
+                    var currentDay = centralTimeInfo.day;
+                    var currentTime = centralTimeInfo.timeInMinutes;
+
+                    // Log for debugging
+                    console.log('=== Maintenance Window Check ===');
+                    console.log('Config Start: ' + maintenanceConfig.startDay + ' ' + maintenanceConfig.startTime + ' (Day: ' + startDay + ', Time: ' + maintenanceStartTime + 'min)');
+                    console.log('Config End: ' + maintenanceConfig.endDay + ' ' + maintenanceConfig.endTime + ' (Day: ' + endDay + ', Time: ' + maintenanceEndTime + 'min)');
+                    console.log('Current: Day ' + currentDay + ', Time ' + currentTime + 'min (' + centralTimeInfo.hours + ':' + String(centralTimeInfo.minutes).padStart(2, '0') + ')');
+
+                    // CASE 1: Same day maintenance (e.g., Saturday 05:55 to Saturday 06:50)
+                    if (startDay === endDay) {
+                        console.log('✓ Same-day maintenance window');
+
+                        if (currentDay === startDay &&
+                            currentTime >= maintenanceStartTime &&
+                            currentTime < maintenanceEndTime) {
+
+                            console.log('✓ MAINTENANCE ACTIVE (Same-day window)');
+                            return true;
+                        }
+                    }
+                    // CASE 2: Multi-day maintenance (e.g., Saturday 22:30 to Sunday 05:00)
+                    else {
+                        console.log('✓ Multi-day maintenance window');
+
+                        // Check if start day and time >= start time
+                        if (currentDay === startDay && currentTime >= maintenanceStartTime) {
+                            console.log('✓ Maintenance Active: Start Window');
+                            return true;
+                        }
+
+                        // Check if end day and time < end time
+                        if (currentDay === endDay && currentTime < maintenanceEndTime) {
+                            console.log('✓ Maintenance Active: End Window');
+                            return true;
+                        }
+                    }
+
+                    console.log('X Maintenance Not Active');
+                    return false;
+                } catch (error) {
+                    console.error('Error checking maintenance window:', error);
+                    return false;
+                }
+            }
+
+            /**
+              * Get next maintenance time
+              */
+            function getNextMaintenanceTime() {
+                var now = new Date();
+                var startDay = getDayNumber(maintenanceConfig.startDay);
+                var dayOfWeek = now.getDay();
+                var maintenanceStartTime = parseTimeToMinutes(maintenanceConfig.startTime);
+                var currentTime = now.getHours() * 60 + now.getMinutes();
+
+                var nextMaintenance = new Date(now);
+
+                if (dayOfWeek === startDay) {
+                    if (currentTime < maintenanceStartTime) {
+                        nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
+                            parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
+                    } else {
+                        nextMaintenance.setDate(nextMaintenance.getDate() + 7);
+                        nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
+                            parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
+                    }
+                } else {
+                    var daysUntilNext = (startDay - dayOfWeek + 7) % 7;
+                    if (daysUntilNext === 0) daysUntilNext = 7;
+                    nextMaintenance.setDate(nextMaintenance.getDate() + daysUntilNext);
+                    nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
+                        parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
+                }
+
+                return nextMaintenance;
+            }
+
+            /**
+             * Update maintenance status display
+             */
+            function updateMaintenanceStatus() {
+                $jQ = jQuery.noConflict();
+                var underMaintenance = isMaintenanceWindow();
+                // alert(underMaintenance);
+                if (underMaintenance) {
+                    $jQ('#maintenanceContainer').fadeIn();
+                    // BOM upload will not be available from 2230 Saturdays to 0500 Sundays Central time
+                    $jQ('#maintenanceLabel').text(
+                        'Weekly scheduled maintenance is in progress (Every ' +
+                        maintenanceConfig.startDay + ' ' + maintenanceConfig.startTime +
+                        ' to ' + maintenanceConfig.endDay + ' ' + maintenanceConfig.endTime + '). ' +
+                        'We will be back online soon.'
+                    );
+
+                    // var now = new Date();
+                    $jQ('#maintenanceTime').text(
+                        formatTime(getCurrentTimeInCentralTime())
+
+                    );
+
+                    if (underMaintenance) {
+                        // Disable controls
+                        $jQ("#btnGetBOMFromMapics").prop("disabled", true).val('Under maintenance');
+                        // alert(underMaintenance);
+
+                    }
+                    else {
+                        $jQ('#maintenanceContainer').fadeOut();
+                        // Enable controls
+                        $jQ("#btnGetBOMFromMapics").prop("disabled", false).val('Get BOM from XA');
+                        // alert(underMaintenance);
+                    }
+                }
+            }
+
+            /**
+             * Format time as readable string
+             */
+            function formatTime(date) {
+                var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                var day = daysOfWeek[date.day]; //.getDay()
+                var hours = String(date.hours).padStart(2, '0'); // .getHours()
+                var minutes = String(date.minutes).padStart(2, '0');    // .getMinutes()
+                var month = String(date.month + 1).padStart(2, '0');  // .getMonth()
+                var dayOfMonth = String(date.dayOfMonth).padStart(2, '0'); // .getDate()
+
+                return day + ', ' + month + '/' + dayOfMonth + ' at ' + hours + ':' + minutes;
+            }
+
+            /* Maintenance Configuration End */
 
         $jQ(document).ready(function () {
             // fromQueryString = N will pull default environment from cookie.
@@ -262,6 +603,30 @@
                 this.value = this.value.toUpperCase();
                 // alert(document.getElementById('txtItemNumber').value);
             });
+
+            /* maintenance settings */
+
+            // Initial check
+            updateMaintenanceStatus();
+
+            // Check every minute
+            setInterval(updateMaintenanceStatus, 60000);
+
+            // Check every second (for demo, reduce to 60000ms for production)
+            setInterval(function () {
+                //var now = new Date();
+                //var hours = String(now.getHours()).padStart(2, '0');
+                //var minutes = String(now.getMinutes()).padStart(2, '0');
+                //var seconds = String(now.getSeconds()).padStart(2, '0');
+
+                if (isMaintenanceWindow()) {
+                    $jQ('#maintenanceTime').text(
+                        'Current time: ' + formatTime(getCurrentTimeInCentralTime())
+                    );
+                }
+            }, 1000);
+
+            /* maintenance settings end. */
 
             $jQ("#txtItemNumber").on("keypress", function (e) {
                 if (e.which === 13) {

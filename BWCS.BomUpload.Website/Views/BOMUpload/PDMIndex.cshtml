@@ -347,10 +347,10 @@
         /* Maintenance Configuration Start */
 
         var maintenanceConfig = {
-            startDay: 'Monday',      // Saturday
-            startTime: '01:55',        // 22:30 (10:30 PM)
-            endDay: 'Monday',          // Sunday
-            endTime: '02:00',          // 05:00 (5:00 AM)
+            startDay: 'Friday',      // Saturday
+            startTime: '01:00',        // 22:30 (10:30 PM)
+            endDay: 'Friday',          // Sunday
+            endTime: '05:00',          // 05:00 (5:00 AM)
             timeZone: 'America/Chicago' // Central Time
         };
 
@@ -555,18 +555,6 @@
                     }
                 }
 
-                //// Check if start day and time >= start time
-                //if (currentDay === startDay && currentTime >= maintenanceStartTime) {
-                //    console.log('✓ Maintenance Active: Start Window');
-                //    return true;
-                //}
-
-                //// Check if end day and time < end time
-                //if (currentDay === endDay && currentTime < maintenanceEndTime) {
-                //    console.log('✓ Maintenance Active: End Window');
-                //    return true;
-                //}
-
                 console.log('X Maintenance Not Active');
                 return false;
             } catch (error) {
@@ -635,11 +623,16 @@
                 if (underMaintenance) {
                     // Disable controls
                     $jQ("#btnUploadBomToXA").prop("disabled", true); // .text('Upload BOM to XA');
+                    $jQ("#btnGetBOMParentItemInfo").prop("disabled", true).val('Under maintenance');   
+                    // alert(underMaintenance);
+ 
                 }
                 else {
                     $jQ('#maintenanceContainer').fadeOut();
                     // Enable controls
-                    $jQ("#btnUploadBomToXA").prop("disabled", false); // .text('Save');
+                    $jQ("#btnUploadBomToXA").prop("disabled", false);  
+                    $jQ("#btnGetBOMParentItemInfo").prop("disabled", false).val('Get BOM Parent Item Info');  
+                    // alert(underMaintenance);
                 }
             }
         }
