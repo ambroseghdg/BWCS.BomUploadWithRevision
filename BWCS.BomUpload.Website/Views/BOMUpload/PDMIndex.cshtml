@@ -346,6 +346,7 @@
 
         /* Maintenance Configuration Start */
 
+        /*
         var maintenanceConfig = {
             startDay: 'Friday',      // Saturday
             startTime: '01:00',        // 22:30 (10:30 PM)
@@ -353,8 +354,8 @@
             endTime: '05:00',          // 05:00 (5:00 AM)
             timeZone: 'America/Chicago' // Central Time
         };
-
-        /*
+        */
+        
         var maintenanceConfig = {
             startDay: 'Saturday',      // Saturday
             startTime: '22:30',        // 22:30 (10:30 PM)
@@ -362,9 +363,7 @@
             endTime: '05:00',          // 05:00 (5:00 AM)
             timeZone: 'America/Chicago' // Central Time
         };
-        */
-
-
+        
         /**
          * Get current time in Central Time Zone (America/Chicago)
          * Automatically handles Daylight Saving Time (DST)
@@ -528,29 +527,29 @@
 
                 // CASE 1: Same day maintenance (e.g., Saturday 05:55 to Saturday 06:50)
                 if (startDay === endDay) {
-                    console.log('✓ Same-day maintenance window');
+                    console.log('Same-day maintenance window');
 
                     if (currentDay === startDay &&
                         currentTime >= maintenanceStartTime &&
                         currentTime < maintenanceEndTime) {
 
-                        console.log('✓ MAINTENANCE ACTIVE (Same-day window)');
+                        console.log('MAINTENANCE ACTIVE (Same-day window)');
                         return true;
                     }
                 }
                 // CASE 2: Multi-day maintenance (e.g., Saturday 22:30 to Sunday 05:00)
                 else {
-                    console.log('✓ Multi-day maintenance window');
+                    console.log('Multi-day maintenance window');
 
                     // Check if start day and time >= start time
                     if (currentDay === startDay && currentTime >= maintenanceStartTime) {
-                        console.log('✓ Maintenance Active: Start Window');
+                        console.log('Maintenance Active: Start Window');
                         return true;
                     }
 
                     // Check if end day and time < end time
                     if (currentDay === endDay && currentTime < maintenanceEndTime) {
-                        console.log('✓ Maintenance Active: End Window');
+                        console.log('Maintenance Active: End Window');
                         return true;
                     }
                 }
