@@ -2,7 +2,10 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool isMaintenanceWindowCrtl = ViewBag.isMaintenanceWindowControl ?? false;
 }
+
 @if (TempData["BOMUploadSuccessMsg"] != null && TempData["BOMUploadSuccessMsg"].ToString().Trim().Length > 7)
 {
     <script type="text/javascript">
@@ -12,11 +15,14 @@
 
     </script>
 }
-
+<meta http-equiv="refresh" content="1200"> 
 <h2 style="color:#337ab7;font-family:Arial;font-size:large;margin-right:10px;">
     <input style="float:right" type="submit" id="btnUploadBomToXA" onclick="UploadBomToXA();" class="btnLast" value="Upload BOM to XA" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <input style="float:right" type="button" id="btnGetBOMParentItemInfo" onclick="GetBOMParentItemRevisionInput()" class="btnGetRevision" value="Get BOM Parent Item Info" />&nbsp;&nbsp;&nbsp;
 </h2>
+
+<!-- Hidden data attribute to pass maintenance status to JavaScript -->
+<input type="hidden" id="maintenanceWindowStatus" value="@isMaintenanceWindowCrtl.ToString().ToLower()" />
 
 <style type="text/css">
     a {
@@ -140,7 +146,7 @@
     /* Maintainence Window styles */
 
     .maintenance-container {
-        display:none;
+        display: none;
         background-color: #ffcccc;
         border: 3px solid #ff0000;
         padding: 20px;
@@ -149,11 +155,11 @@
         text-align: center;
     }
 
-    .maintenance-container h1 {
-        color: #ff0000;
-        margin: 0 0 10px 0;
-        font-size: 28px;
-    }
+        .maintenance-container h1 {
+            color: #ff0000;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
 
     .maintenance-message {
         color: #cc0000;
@@ -179,6 +185,47 @@
         cursor: pointer;
     }
 
+    /* Tooltip styling */
+    [title] {
+        cursor: help;
+    }
+
+    .alert {
+        background-color: #fc6237;
+        border: 5px solid #ff0000;
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: bolder;
+        font-size: 14px;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ff0000;
+        color: #cc0000; /*#664d03;*/
+    }
+
+    .alert h1 {
+        color: #ff0000;
+        margin: 0 0 10px 0;
+        font-size: 28px;
+    }
+
+
+        .alert-warning strong {
+            font-weight: bolder;
+            font-size: 16px;
+        }
+
+        .alert-warning p {
+            margin-bottom: 0.5rem;
+        }
+
+            .alert-warning p:last-child {
+                margin-bottom: 0;
+            }
 </style>
 
 <div style="height:100%;width:100%">
@@ -229,11 +276,14 @@
             <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td>
                 <!-- Maintenance Alert Container -->
-                <div id="maintenanceContainer" class="maintenance-container">
-                    <h1 id="maintenanceHeader">⚠️ BOM upload will not be available from 2230 Saturdays to 0500 Sundays Central time.</h1>
-                    <p id="maintenanceLabel" class="maintenance-message"></p>
-                    <p id="maintenanceTime" class="maintenance-time"></p>
-                </div>
+                @if (isMaintenanceWindowCrtl)
+                {
+                    <div id="maintenanceContainer" class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <h2>⚠️&nbsp;@ViewBag.MaintenanceMessage</h2>
+                        <h1>BOM Upload to XA will not be available from 22:30 Saturdays to 05:00 Sundays Central time.</h1>
+                        <p>Allowed Time: Sunday 5:00 AM - Saturday 10:30 PM CDT</p>
+                    </div>
+                }
             </td>
         </tr>
     </table>
@@ -250,8 +300,8 @@
 </div>
 
 @*@{
-    var queryStringParentItemRevision = Request.QueryString["ParentItemRevision"];
-}*@
+        var queryStringParentItemRevision = Request.QueryString["ParentItemRevision"];
+    }*@
 
 @section scripts {
     <script type="text/javascript">
@@ -346,311 +396,29 @@
 
         /* Maintenance Configuration Start */
 
-        /*
-        var maintenanceConfig = {
-            startDay: 'Friday',      // Saturday
-            startTime: '01:00',        // 22:30 (10:30 PM)
-            endDay: 'Friday',          // Sunday
-            endTime: '05:00',          // 05:00 (5:00 AM)
-            timeZone: 'America/Chicago' // Central Time
-        };
-        */
-        
-        var maintenanceConfig = {
-            startDay: 'Saturday',      // Saturday
-            startTime: '22:30',        // 22:30 (10:30 PM)
-            endDay: 'Sunday',          // Sunday
-            endTime: '05:00',          // 05:00 (5:00 AM)
-            timeZone: 'America/Chicago' // Central Time
-        };
-        
-        /**
-         * Get current time in Central Time Zone (America/Chicago)
-         * Automatically handles Daylight Saving Time (DST)
-         * returns {Object} Central time information
-         */
-        /**
- * Get current time in Central Time (America/Chicago)
- * Automatically handles CST/CDT (DST)
- */
-        function getCurrentTimeInCentralTime() {
-            try {
-                const now = new Date();
-
-                const parts = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Chicago',
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                }).formatToParts(now);
-
-                const get = (type) => parts.find(p => p.type === type)?.value;
-
-                let hours = parseInt(get('hour'), 10);
-
-                // Some environments can return "24" at midnight.
-                if (hours === 24) {
-                    hours = 0;
-                }
-
-                const minutes = parseInt(get('minute'), 10);
-                const seconds = parseInt(get('second'), 10);
-
-                const dayName = get('weekday');
-
-                const dayNames = {
-                    Sunday: 0,
-                    Monday: 1,
-                    Tuesday: 2,
-                    Wednesday: 3,
-                    Thursday: 4,
-                    Friday: 5,
-                    Saturday: 6
-                };
-
-                const day = dayNames[dayName];
-
-                return {
-                    day: day,
-                    dayName: dayName,
-                    hours: hours,
-                    minutes: minutes,
-                    seconds: seconds,
-
-                    timeInMinutes: (hours * 60) + minutes,
-
-                    formatted:
-                        String(hours).padStart(2, '0') + ':' +
-                        String(minutes).padStart(2, '0') + ':' +
-                        String(seconds).padStart(2, '0'),
-
-                    date: now,
-
-                    year: parseInt(get('year'), 10),
-                    month: parseInt(get('month'), 10),
-                    dayOfMonth: parseInt(get('day'), 10)
-                };
-
-            } catch (error) {
-                console.error('Error getting Central Time:', error);
-                return null;
-            }
-        }
-
-        /**
-         * Get day name from day number
-         */
-        function getDayName(dayNumber) {
-            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            return days[dayNumber] || 'Unknown';
-        }
-
-            /**
-        * Parse time string "HH:MM" to minutes
-        * param {string} timeString - Time in format "HH:MM"
-        * returns {number} Total minutes
-        */
-        function parseTimeToMinutes(timeString) {
-        try {
-            var parts = timeString.split(':');
-            var hours = parseInt(parts[0], 10);
-            var minutes = parseInt(parts[1], 10);
-
-            if (isNaN(hours) || isNaN(minutes)) {
-                console.error('Invalid time format: ' + timeString);
-                return 0;
-            }
-
-            return hours * 60 + minutes;
-        } catch (error) {
-            console.error('Error parsing time:', error);
-            return 0;
-        }
-        }
-
-        /**
-         * Get day number from day name
-         * param {string} dayName - Day name (e.g., "Saturday", "Sunday")
-         * returns { number } Day of week(0 = Sunday, 6 = Saturday)
-         */
-        function getDayNumber(dayName) {
-            var days = {
-                'Sunday': 0,
-                'Monday': 1,
-                'Tuesday': 2,
-                'Wednesday': 3,
-                'Thursday': 4,
-                'Friday': 5,
-                'Saturday': 6
-            };
-
-            return days[dayName] !== undefined ? days[dayName] : -1;
-        }
-
-        /*
-         * Check if current time is within maintenance window
-         * Saturday 22:30 to Sunday 05:00 Central Time
-         */
-        function isMaintenanceWindow() {
-            try {
-                // Parse times from config
-                var maintenanceStartTime = parseTimeToMinutes(maintenanceConfig.startTime);
-                var maintenanceEndTime = parseTimeToMinutes(maintenanceConfig.endTime);
-                var startDay = getDayNumber(maintenanceConfig.startDay);
-                var endDay = getDayNumber(maintenanceConfig.endDay);
-
-                // Get CENTRAL TIME
-                var centralTimeInfo = getCurrentTimeInCentralTime();
-                var currentDay = centralTimeInfo.day;
-                var currentTime = centralTimeInfo.timeInMinutes;
-
-                // alert('CST: '+formatTime(getCurrentTimeInCentralTime())); 
-
-                // alert(maintenanceStartTime);
-                // alert("|" + currentDay + "|" + currentTime);
-
-                ////// Get current time
-                ////var now = new Date();
-                ////var currentDay = now.getDay();
-                ////var currentTime = now.getHours() * 60 + now.getMinutes();
-
-                // Log for debugging
-                console.log('=== Maintenance Window Check ===');
-                console.log('Config Start: ' + maintenanceConfig.startDay + ' ' + maintenanceConfig.startTime + ' (Day: ' + startDay + ', Time: ' + maintenanceStartTime + 'min)');
-                console.log('Config End: ' + maintenanceConfig.endDay + ' ' + maintenanceConfig.endTime + ' (Day: ' + endDay + ', Time: ' + maintenanceEndTime + 'min)');
-                console.log('Current: Day ' + currentDay + ', Time ' + currentTime + 'min (' + centralTimeInfo.hours + ':' + String(centralTimeInfo.minutes).padStart(2, '0') + ')');
-
-                // CASE 1: Same day maintenance (e.g., Saturday 05:55 to Saturday 06:50)
-                if (startDay === endDay) {
-                    console.log('Same-day maintenance window');
-
-                    if (currentDay === startDay &&
-                        currentTime >= maintenanceStartTime &&
-                        currentTime < maintenanceEndTime) {
-
-                        console.log('MAINTENANCE ACTIVE (Same-day window)');
-                        return true;
-                    }
-                }
-                // CASE 2: Multi-day maintenance (e.g., Saturday 22:30 to Sunday 05:00)
-                else {
-                    console.log('Multi-day maintenance window');
-
-                    // Check if start day and time >= start time
-                    if (currentDay === startDay && currentTime >= maintenanceStartTime) {
-                        console.log('Maintenance Active: Start Window');
-                        return true;
-                    }
-
-                    // Check if end day and time < end time
-                    if (currentDay === endDay && currentTime < maintenanceEndTime) {
-                        console.log('Maintenance Active: End Window');
-                        return true;
-                    }
-                }
-
-                console.log('X Maintenance Not Active');
-                return false;
-            } catch (error) {
-                console.error('Error checking maintenance window:', error);
-                return false;
-            }
-        }
-
-        /**
-          * Get next maintenance time
-          */
-        function getNextMaintenanceTime() {
-            var now = new Date();
-            var startDay = getDayNumber(maintenanceConfig.startDay);
-            var dayOfWeek = now.getDay();
-            var maintenanceStartTime = parseTimeToMinutes(maintenanceConfig.startTime);
-            var currentTime = now.getHours() * 60 + now.getMinutes();
-
-            var nextMaintenance = new Date(now);
-
-            if (dayOfWeek === startDay) {
-                if (currentTime < maintenanceStartTime) {
-                    nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
-                        parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
-                } else {
-                    nextMaintenance.setDate(nextMaintenance.getDate() + 7);
-                    nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
-                        parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
-                }
-            } else {
-                var daysUntilNext = (startDay - dayOfWeek + 7) % 7;
-                if (daysUntilNext === 0) daysUntilNext = 7;
-                nextMaintenance.setDate(nextMaintenance.getDate() + daysUntilNext);
-                nextMaintenance.setHours(parseInt(maintenanceConfig.startTime.split(':')[0]),
-                    parseInt(maintenanceConfig.startTime.split(':')[1]), 0, 0);
-            }
-
-            return nextMaintenance;
-        }
-
         /**
          * Update maintenance status display
          */
         function updateMaintenanceStatus() {
             $jQ = jQuery.noConflict();
-            var underMaintenance = isMaintenanceWindow();
+            var maintenanceWindowStatus = $jQ('#maintenanceWindowStatus').val() === 'true';
             // alert(underMaintenance);
-            if (underMaintenance) {
-                $jQ('#maintenanceContainer').fadeIn();
-                // BOM upload will not be available from 2230 Saturdays to 0500 Sundays Central time
-                $jQ('#maintenanceLabel').text(
-                    'Weekly scheduled maintenance is in progress (Every ' +
-                    maintenanceConfig.startDay + ' ' + maintenanceConfig.startTime +
-                    ' to ' + maintenanceConfig.endDay + ' ' + maintenanceConfig.endTime + '). ' +
-                    'We will be back online soon.'
-                );
-
-                // var now = new Date();
-                $jQ('#maintenanceTime').text(
-                    formatTime(getCurrentTimeInCentralTime())
-                    //'Current time: ' + String(now.getHours()).padStart(2, '0') + ':' +
-                    //String(now.getMinutes()).padStart(2, '0') + ':' +
-                    //String(now.getSeconds()).padStart(2, '0')
-                );
-
-                if (underMaintenance) {
-                    // Disable controls
-                    $jQ("#btnUploadBomToXA").prop("disabled", true); // .text('Upload BOM to XA');
-                    $jQ("#btnGetBOMParentItemInfo").prop("disabled", true).val('Under maintenance');   
-                    // alert(underMaintenance);
- 
-                }
-                else {
-                    $jQ('#maintenanceContainer').fadeOut();
-                    // Enable controls
-                    $jQ("#btnUploadBomToXA").prop("disabled", false);  
-                    $jQ("#btnGetBOMParentItemInfo").prop("disabled", false).val('Get BOM Parent Item Info');  
-                    // alert(underMaintenance);
-                }
+            if (maintenanceWindowStatus) {
+                // Disable controls
+                $jQ("#btnUploadBomToXA").prop("disabled", true); // .text('Upload BOM to XA');
+                $jQ("#btnGetBOMParentItemInfo").prop("disabled", true).val('Under maintenance');
+                // alert(maintenanceWindowStatus);
+            }
+            else {
+                // Enable controls
+                $jQ("#btnUploadBomToXA").prop("disabled", false);
+                $jQ("#btnGetBOMParentItemInfo").prop("disabled", false).val('Get BOM Parent Item Info');
+                $jQ("#maintenanceWindowStatus").val("false");
+                // alert(underMaintenance);
             }
         }
 
-        /**
-         * Format time as readable string
-         */
-        function formatTime(date) {
-            var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            var day = daysOfWeek[date.day]; //.getDay()
-            var hours = String(date.hours).padStart(2, '0'); // .getHours()
-            var minutes = String(date.minutes).padStart(2, '0');    // .getMinutes()
-            var month = String(date.month + 1).padStart(2, '0');  // .getMonth()
-            var dayOfMonth = String(date.dayOfMonth).padStart(2, '0'); // .getDate()
-
-            return day + ', ' + month + '/' + dayOfMonth + ' at ' + hours + ':' + minutes;
-        }
-
-       /* Maintenance Configuration End */
+        /* Maintenance Configuration End */
 
     $jQ("body").on("change", "#ddlEnv",
         function () {
@@ -779,34 +547,14 @@
 
             });
 
-            /* maintenance settings */
-
-            // Initial check
-            updateMaintenanceStatus();
-
-            // Check every minute
-            setInterval(updateMaintenanceStatus, 60000);
-
-            // Check every second (for demo, reduce to 60000ms for production)
-            setInterval(function () {
-                //var now = new Date();
-                //var hours = String(now.getHours()).padStart(2, '0');
-                //var minutes = String(now.getMinutes()).padStart(2, '0');
-                //var seconds = String(now.getSeconds()).padStart(2, '0');
-
-                if (isMaintenanceWindow()) {
-                    $jQ('#maintenanceTime').text(
-                        'Current time: ' + formatTime(getCurrentTimeInCentralTime())
-                    );
-                }
-            }, 1000);
-
-            //'Current time: ' + hours + ':' + minutes + ':' + seconds
-
-
-
-
         });
+
+        /* maintenance settings */
+
+        // Initial check
+        updateMaintenanceStatus();
+
+        /* maintenance settings end. */
 
     //if (qstrItmNum != null) { // !!! WRONG CALL MADE in WRONG PLACE !!!
     //    //getBOMsFromSQL();
@@ -1059,11 +807,15 @@
             $("#BOMUploadGrid").jqGrid('setGridParam', { datatype: 'json' }).trigger('reloadGrid', [{ current: true }]);
         }
 
-        // loadonce: true, needs to work SORT, column Text filter
+
+        // alert($jQ("#maintenanceWindowStatus").val());  
+        // loadonce: true, needs to work SORT, column Text filter 
         // The below method is triggered when GetBOMFromMapics is clicked.
         function GetBOMComponents()
         {
-            if (isMaintenanceWindow()) return;
+            var IsMaintenanceWindowActive = $jQ('#maintenanceWindowStatus').val() === 'true';
+
+            if (IsMaintenanceWindowActive) { return; }
 
             // Check BOM existence and proceed.
             CheckItemExists();
@@ -1250,10 +1002,11 @@
                 gridComplete: function () {
                     rowsToColor = jQuery("#BOMUploadGrid").getDataIDs();
 
-                    if (isMaintenanceWindow())
-                        $jQ("#btnUploadBomToXA").prop("disabled", true).css("background-color", "grey").attr("title", "BOM cannot be uploaded when Weekly scheduled maintenance is in progress.");
-                    else
-                        $jQ("#btnUploadBomToXA").prop("disabled", false).css("background-color", "").removeAttr("title");
+                    updateMaintenanceStatus();
+                    //if (isMaintenanceWindow())
+                    //    $jQ("#btnUploadBomToXA").prop("disabled", true).css("background-color", "grey").attr("title", "BOM cannot be uploaded when Weekly scheduled maintenance is in progress.");
+                    //else
+                    //    $jQ("#btnUploadBomToXA").prop("disabled", false).css("background-color", "").removeAttr("title");
 
                     for (var i = 0; i < rowsToColor.length; i++) {
                         var flag = $jQ("#BOMUploadGrid").getCell(rowsToColor[i], "Flag");

@@ -62,10 +62,63 @@ namespace BWCS.BomUpload.Website.Controllers
         public string ParentItemRevisionVal = string.Empty;
 
         string strUserActivity = string.Empty;
-        string strMessageToUser = string.Empty; 
+        string strMessageToUser = string.Empty;
 
-        // public string isPDMData = string.Empty;
-        // // if (Request.QueryString.AllKeys.Contains("ParentItemRevision"))
+        private MaintenanceWindowConfig _maintenanceConfig;
+
+        public BOMUploadController()
+        {
+            // Load configuration from web.config
+            _maintenanceConfig = MaintenanceWindowConfigLoader.LoadFromConfig();
+        }
+
+        /// <summary>
+        /// Check if current time falls within maintenance window
+        /// Saturday 10:30 PM to Sunday 5:00 AM CDT
+        /// </summary>
+        private bool IsMaintenanceWindowControl ()
+        {
+            try
+            {
+                // Get current time in CDT timezone
+                TimeZoneInfo cdtZone = TimeZoneInfo.FindSystemTimeZoneById(_maintenanceConfig.TimeZone);
+                DateTime currentTimeCDT = TimeZoneInfo.ConvertTime(DateTime.Now, cdtZone);
+
+                DayOfWeek currentDay = currentTimeCDT.DayOfWeek;
+                TimeSpan currentTimeOfDay = currentTimeCDT.TimeOfDay;
+                //int hour = currentTimeCDT.Hour; int minute = currentTimeCDT.Minute;
+
+                // Check if we're in maintenance window
+                bool isMaintenanceDay = false;
+
+                if (_maintenanceConfig.StartDay == _maintenanceConfig.EndDay)
+                {
+                    // Same day maintenance (e.g., Monday to Monday)
+                    isMaintenanceDay = (currentDay == _maintenanceConfig.StartDay) &&
+                                       (currentTimeOfDay >= _maintenanceConfig.StartTime &&
+                                        currentTimeOfDay <= _maintenanceConfig.EndTime);
+                }
+                else
+                {
+                    // Multi-day maintenance (e.g., Saturday to Sunday)
+                    bool isStartDay = (currentDay == _maintenanceConfig.StartDay) &&
+                                      (currentTimeOfDay >= _maintenanceConfig.StartTime);
+
+                    bool isEndDay = (currentDay == _maintenanceConfig.EndDay) &&
+                                    (currentTimeOfDay <= _maintenanceConfig.EndTime);
+
+                    isMaintenanceDay = isStartDay || isEndDay;
+                }
+
+                return isMaintenanceDay;
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                Console.WriteLine($"Error checking maintenance window: {ex.Message}");
+                return false;
+            }
+        }
 
         /// <summary>
         /// Clear model and return index view.
@@ -79,7 +132,18 @@ namespace BWCS.BomUpload.Website.Controllers
                 HasUrlParentItemRevision = Request.QueryString["ParentItemRevision"] != null;
                 ParentItemRevisionVal = string.Empty; 
                 if (HasUrlParentItemRevision) 
-                    { ParentItemRevisionVal = Request.QueryString["ParentItemRevision"].ToString().Trim(); } 
+                    { ParentItemRevisionVal = Request.QueryString["ParentItemRevision"].ToString().Trim(); }
+
+                bool isMaintenanceWindowControl = IsMaintenanceWindowControl();
+                ViewBag.isMaintenanceWindowControl = isMaintenanceWindowControl;
+
+                if (isMaintenanceWindowControl)
+                {
+                    ViewBag.MaintenanceMessage = "Weekly scheduled maintenance is in progress.";
+                }
+                else
+                {
+                    ViewBag.MaintenanceMessage = ""; } 
 
                 if (!string.IsNullOrEmpty(ReadFrom))
                 {

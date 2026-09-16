@@ -137,6 +137,7 @@
     </Compile>
     <Compile Include="Models\BOMUploadMasterModel.cs" />
     <Compile Include="Models\BOMUploadModel.cs" />
+    <Compile Include="Models\MaintenanceWindowConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
