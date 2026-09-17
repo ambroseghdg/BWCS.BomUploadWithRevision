@@ -21,9 +21,6 @@ namespace BWCS.BomUpload.Website.Models
 
     public class MaintenanceWindowConfigLoader
     {
-        /// <summary>
-        /// Load maintenance window configuration from web.config
-        /// </summary>
         public static MaintenanceWindowConfig LoadFromConfig()
         {
             try
@@ -86,7 +83,6 @@ namespace BWCS.BomUpload.Website.Models
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error loading maintenance window config: {ex.Message}");
-                // Return defaults
                 return new MaintenanceWindowConfig();
             }
         }

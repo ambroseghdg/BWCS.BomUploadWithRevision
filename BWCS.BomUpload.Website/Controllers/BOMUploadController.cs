@@ -74,48 +74,76 @@ namespace BWCS.BomUpload.Website.Controllers
 
         /// <summary>
         /// Check if current time falls within maintenance window
-        /// Saturday 10:30 PM to Sunday 5:00 AM CDT
+        /// Saturday 10:30 PM to Sunday 5:00 AM CDT |  
+        /// Supports multi-day windows (e.g., Wednesday 06:00 AM to Sunday 05:00 AM)  
         /// </summary>
         private bool IsMaintenanceWindowControl ()
         {
             try
             {
-                // Get current time in CDT timezone
-                TimeZoneInfo cdtZone = TimeZoneInfo.FindSystemTimeZoneById(_maintenanceConfig.TimeZone);
-                DateTime currentTimeCDT = TimeZoneInfo.ConvertTime(DateTime.Now, cdtZone);
+                TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(_maintenanceConfig.TimeZone);
+                DateTime currentTime = TimeZoneInfo.ConvertTime(DateTime.Now, timeZone);
 
-                DayOfWeek currentDay = currentTimeCDT.DayOfWeek;
-                TimeSpan currentTimeOfDay = currentTimeCDT.TimeOfDay;
-                //int hour = currentTimeCDT.Hour; int minute = currentTimeCDT.Minute;
+                int currentDayInt = (int)currentTime.DayOfWeek;
+                int startDayInt = (int)_maintenanceConfig.StartDay;
+                int endDayInt = (int)_maintenanceConfig.EndDay;
+                TimeSpan currentTimeOfDay = currentTime.TimeOfDay;
+                TimeSpan startTime = _maintenanceConfig.StartTime;
+                TimeSpan endTime = _maintenanceConfig.EndTime;
 
-                // Check if we're in maintenance window
-                bool isMaintenanceDay = false;
-
-                if (_maintenanceConfig.StartDay == _maintenanceConfig.EndDay)
+                //  CASE 1: Same day (e.g., Monday to Monday)
+                if (startDayInt == endDayInt)
                 {
-                    // Same day maintenance (e.g., Monday to Monday)
-                    isMaintenanceDay = (currentDay == _maintenanceConfig.StartDay) &&
-                                       (currentTimeOfDay >= _maintenanceConfig.StartTime &&
-                                        currentTimeOfDay <= _maintenanceConfig.EndTime);
-                }
-                else
-                {
-                    // Multi-day maintenance (e.g., Saturday to Sunday)
-                    bool isStartDay = (currentDay == _maintenanceConfig.StartDay) &&
-                                      (currentTimeOfDay >= _maintenanceConfig.StartTime);
-
-                    bool isEndDay = (currentDay == _maintenanceConfig.EndDay) &&
-                                    (currentTimeOfDay <= _maintenanceConfig.EndTime);
-
-                    isMaintenanceDay = isStartDay || isEndDay;
+                    return (currentDayInt == startDayInt) &&
+                           (currentTimeOfDay >= startTime && currentTimeOfDay <= endTime);
                 }
 
-                return isMaintenanceDay;
+                //  CASE 2: Non-wrapping window (e.g., Wed to Sun, Tue to Thu)
+                if (startDayInt < endDayInt)
+                {
+                    if (currentDayInt < startDayInt || currentDayInt > endDayInt)
+                    {
+                        return false;
+                    }
+
+                    // Check time constraints on boundary days
+                    if (currentDayInt == startDayInt)
+                    {
+                        return currentTimeOfDay >= startTime;
+                    }
+
+                    if (currentDayInt == endDayInt)
+                    {
+                        return currentTimeOfDay <= endTime;
+                    }
+
+                    // In between days
+                    return true;
+                }
+
+                //  CASE 3: Wrapping window (e.g., Sat to Tue, Fri to Mon)
+                // startDayInt > endDayInt
+                {
+                    if (currentDayInt >= startDayInt)
+                    {
+                        // After start day in same week
+                        return (currentDayInt == startDayInt) ?
+                            (currentTimeOfDay >= startTime) : true;
+                    }
+
+                    if (currentDayInt <= endDayInt)
+                    {
+                        // Before end day in next week
+                        return (currentDayInt == endDayInt) ?
+                            (currentTimeOfDay <= endTime) : true;
+                    }
+
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                // Log exception
-                Console.WriteLine($"Error checking maintenance window: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
                 return false;
             }
         }
